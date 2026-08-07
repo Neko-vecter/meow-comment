@@ -1,0 +1,31 @@
+#!/bin/sh
+set -eu
+
+if ! getent group meow-comment >/dev/null 2>&1; then
+    addgroup --system meow-comment
+fi
+
+if ! id -u meow-comment >/dev/null 2>&1; then
+    adduser --system \
+        --ingroup meow-comment \
+        --home /var/lib/meow-comment \
+        --no-create-home \
+        --shell /usr/sbin/nologin \
+        meow-comment
+fi
+
+install -d -o meow-comment -g meow-comment -m 0700 /var/lib/meow-comment
+chown root:meow-comment /opt/meow-comment/config.json
+chmod 0640 /opt/meow-comment/config.json
+
+if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
+    systemctl daemon-reload
+    systemctl enable meow-comment.service >/dev/null 2>&1 || true
+    if systemctl is-active --quiet meow-comment.service; then
+        systemctl restart meow-comment.service
+    else
+        systemctl start meow-comment.service
+    fi
+fi
+
+exit 0

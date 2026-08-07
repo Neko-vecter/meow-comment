@@ -1,0 +1,21 @@
+[Unit]
+Description=Meow Comment backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=meow-comment
+Group=meow-comment
+WorkingDirectory=/var/lib/meow-comment
+ExecStart=/opt/meow-comment/meow-comment serve --config /opt/meow-comment/config.json
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/meow-comment
+
+[Install]
+WantedBy=multi-user.target
