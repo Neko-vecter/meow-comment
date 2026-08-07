@@ -1,0 +1,23 @@
+{
+  "title": "Comments",
+  "name": "Name",
+  "email": "Email",
+  "link": "Website",
+  "placeholder": "Leave a comment",
+  "send": "Send",
+  "sending": "Sending...",
+  "captcha": "Verification code",
+  "captchaPlaceholder": "Enter code",
+  "captchaPrompt": "Enter the verification code to continue.",
+  "reloadCaptcha": "Reload verification code",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "success": "Comment submitted successfully.",
+  "required": "Please enter your name, email, and comment.",
+  "invalidEmail": "Please enter a valid email address.",
+  "captchaRequired": "Please enter the verification code.",
+  "captchaInvalid": "The verification code is invalid or expired.",
+  "commentFail": "Failed to submit the comment.",
+  "networkFail": "Unable to reach the comment server.",
+  "restoredMsg": "Content has been restored."
+}
