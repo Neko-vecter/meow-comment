@@ -6,6 +6,7 @@
 {
   "listen": "127.0.0.1:8080",
   "db_path": "./data/comments.db",
+  "proxy_ip_header": "X-Forwarded-For",
   "rss_title": "Meow Comment RSS",
   "rss_link": "https://comment.xxx.com",
   "captcha_enabled": true,
@@ -15,6 +16,8 @@
   ]
 }
 ```
+
+`proxy_ip_header` 用于指定代理转发客户端 IP 的请求标头，默认值为 `X-Forwarded-For`，也可以配置为其他标头名称。
 
 ## 启动服务
 

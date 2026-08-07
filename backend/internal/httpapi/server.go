@@ -250,7 +250,7 @@ func (s *Server) handleComment(w http.ResponseWriter, r *http.Request) {
 		SourcePath: strings.TrimSpace(request.SourcePath),
 		PageTitle:  strings.TrimSpace(request.PageTitle),
 		UserAgent:  r.UserAgent(),
-		IPAddress:  clientIP(r),
+		IPAddress:  clientIP(r, s.cfg.ProxyIPHeader),
 		Origin:     r.Header.Get("Origin"),
 		Referer:    r.Header.Get("Referer"),
 		CreatedAt:  time.Now().UTC(),
@@ -344,8 +344,8 @@ func ensureSingleJSONValue(decoder *json.Decoder) error {
 	return nil
 }
 
-func clientIP(r *http.Request) string {
-	if value := strings.TrimSpace(r.Header.Get("X-Real-IP")); value != "" {
+func clientIP(r *http.Request, headerName string) string {
+	if value := strings.TrimSpace(r.Header.Get(headerName)); value != "" {
 		return value
 	}
 

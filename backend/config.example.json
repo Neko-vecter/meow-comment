@@ -1,6 +1,7 @@
 {
   "listen": "127.0.0.1:8080",
   "db_path": "./data/comments.db",
+  "proxy_ip_header": "X-Forwarded-For",
   "rss_title": "Meow Comment RSS",
   "rss_link": "https://comment.xxx.com",
   "captcha_enabled": true,

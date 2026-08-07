@@ -12,6 +12,7 @@ import (
 type Config struct {
 	Listen              string   `json:"listen"`
 	DBPath              string   `json:"db_path"`
+	ProxyIPHeader       string   `json:"proxy_ip_header"`
 	RSSTitle            string   `json:"rss_title"`
 	RSSLink             string   `json:"rss_link"`
 	CaptchaEnabled      bool     `json:"captcha_enabled"`
@@ -32,6 +33,9 @@ func Load(path string) (Config, error) {
 
 	if err := decoder.Decode(&cfg); err != nil {
 		return Config{}, fmt.Errorf("decode config: %w", err)
+	}
+	if strings.TrimSpace(cfg.ProxyIPHeader) == "" {
+		cfg.ProxyIPHeader = "X-Forwarded-For"
 	}
 
 	if err := cfg.Validate(); err != nil {

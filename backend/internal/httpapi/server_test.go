@@ -29,6 +29,7 @@ func newTestApplication(t *testing.T, captchaEnabled, allowedSitesEnabled bool) 
 	cfg := config.Config{
 		Listen:              "127.0.0.1:0",
 		DBPath:              filepath.Join(t.TempDir(), "comments.db"),
+		ProxyIPHeader:       "X-Forwarded-For",
 		RSSTitle:            "Test RSS",
 		RSSLink:             "https://comment.example.com",
 		CaptchaEnabled:      captchaEnabled,
@@ -84,7 +85,7 @@ func TestCommentUsesCaptchaOnceAndStoresRequestMetadata(t *testing.T) {
 	request.Header.Set("Origin", testOrigin)
 	request.Header.Set("Referer", testOrigin+"/page/1")
 	request.Header.Set("User-Agent", "test-agent")
-	request.Header.Set("X-Real-IP", "203.0.113.10")
+	request.Header.Set("X-Forwarded-For", "203.0.113.10")
 	recorder := httptest.NewRecorder()
 	application.Handler().ServeHTTP(recorder, request)
 
