@@ -297,12 +297,15 @@ export default function MeowComments({
             return;
         }
 
-        if (captchaMode !== "disabled" && !captchaUnavailable) {
+        let captchaRequired = captchaMode !== "disabled" && !captchaUnavailable;
+        if (captchaRequired) {
             if (!captcha) {
                 const captchaResult = await loadCaptcha();
                 if (captchaResult !== "disabled") return;
+                // `auto` mode treats a 404 from /verification as a disabled CAPTCHA.
+                captchaRequired = false;
             }
-            if (!captchaCode.trim()) {
+            if (captchaRequired && !captchaCode.trim()) {
                 setCaptchaDialogError(messages.captchaRequired);
                 setCaptchaDialogOpen(true);
                 return;
@@ -336,7 +339,11 @@ export default function MeowComments({
             setCaptchaDialogOpen(false);
             setStatus({ kind: "success", text: messages.success });
         } catch (error) {
-            if (error instanceof RequestError && error.status === 422) {
+            if (
+                captchaMode !== "disabled" &&
+                error instanceof RequestError &&
+                error.status === 422
+            ) {
                 setCaptcha(null);
                 setCaptchaCode("");
                 const captchaResult = await loadCaptcha();
