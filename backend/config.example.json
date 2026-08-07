@@ -1,0 +1,11 @@
+{
+  "listen": "127.0.0.1:8080",
+  "db_path": "./data/comments.db",
+  "rss_title": "Meow Comment RSS",
+  "rss_link": "https://comment.xxx.com",
+  "captcha_enabled": true,
+  "allowed_sites_enabled": true,
+  "allowed_sites": [
+    "https://blog.xxx.com"
+  ]
+}

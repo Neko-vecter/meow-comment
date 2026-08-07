@@ -1,0 +1,13 @@
+# Runtime database files
+backend/data/
+*.db
+*.db-shm
+*.db-wal
+
+# Go build and test output
+backend/bin/
+*.test
+coverage.out
+
+# Local configuration
+backend/config.json
