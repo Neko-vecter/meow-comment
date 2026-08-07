@@ -4,8 +4,8 @@
 
 ```json
 {
-  "listen": "127.0.0.1:8080",
-  "db_path": "./data/comments.db",
+  "listen": "127.0.0.1:9100",
+  "db_path": "/var/lib/meow-comment/comments.db",
   "proxy_ip_header": "X-Forwarded-For",
   "rss_title": "Meow Comment RSS",
   "rss_link": "https://comment.xxx.com",
@@ -22,7 +22,7 @@
 ## 启动服务
 
 ```bash
-meow-comment serve --config config.json
+/opt/meow-comment/meow-comment serve --config /opt/meow-comment/config.json
 ```
 
 ## RSS Token
