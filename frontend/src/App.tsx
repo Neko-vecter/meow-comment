@@ -1,4 +1,4 @@
-import MeowCommentsCore from './components/MeowComments'
+import MeowCommentsCore from './components/MeowCommentsCore'
 
 function MeowComments() {
     const meowCommentsConfig = {
