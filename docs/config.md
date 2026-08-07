@@ -49,3 +49,14 @@ meow-comment token delete --config config.json --id TOKEN_ID
 ```
 
 RSS token 只保存 SHA-256 摘要，不保存明文。
+
+## 日志
+
+服务日志输出到标准输出，包含：
+
+- 配置加载和服务启动
+- HTTP 请求路径、状态码和耗时
+- 监听错误
+- 服务关闭信号和关闭结果
+
+日志不会输出请求体或 RSS token。

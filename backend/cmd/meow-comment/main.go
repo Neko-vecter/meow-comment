@@ -6,6 +6,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -53,13 +54,18 @@ func runServe(args []string) error {
 		return err
 	}
 
+	logger := log.New(os.Stdout, "[meow-comment] ", log.LstdFlags|log.LUTC)
+	logger.Printf("loading config path=%s", *configPath)
+
 	cfg, err := config.Load(*configPath)
 	if err != nil {
+		logger.Printf("config load failed error=%v", err)
 		return err
 	}
 
 	database, err := store.Open(cfg.DBPath)
 	if err != nil {
+		logger.Printf("database open failed error=%v", err)
 		return err
 	}
 	defer database.Close()
@@ -69,7 +75,7 @@ func runServe(args []string) error {
 
 	webServer := &http.Server{
 		Addr:              cfg.Listen,
-		Handler:           application.Handler(),
+		Handler:           loggingHandler(logger, application.Handler()),
 		ReadHeaderTimeout: 10 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      30 * time.Second,
@@ -77,7 +83,16 @@ func runServe(args []string) error {
 	}
 
 	serverErrors := make(chan error, 1)
+	logger.Printf(
+		"starting server listen=%s db=%s captcha_enabled=%t allowed_sites_enabled=%t allowed_sites=%d",
+		cfg.Listen,
+		cfg.DBPath,
+		cfg.CaptchaEnabled,
+		cfg.AllowedSitesEnabled,
+		len(cfg.AllowedSites),
+	)
 	go func() {
+		logger.Printf("server listening address=%s", cfg.Listen)
 		serverErrors <- webServer.ListenAndServe()
 	}()
 
@@ -88,17 +103,64 @@ func runServe(args []string) error {
 	select {
 	case err := <-serverErrors:
 		if !errors.Is(err, http.ErrServerClosed) {
+			logger.Printf("server stopped with error=%v", err)
 			return fmt.Errorf("run server: %w", err)
 		}
 	case <-stop:
+		logger.Printf("shutdown signal received")
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := webServer.Shutdown(ctx); err != nil {
+			logger.Printf("server shutdown failed error=%v", err)
 			return fmt.Errorf("shutdown server: %w", err)
 		}
 	}
+	logger.Printf("server stopped")
 
 	return nil
+}
+
+type loggingResponseWriter struct {
+	http.ResponseWriter
+	status      int
+	wroteHeader bool
+}
+
+func (w *loggingResponseWriter) WriteHeader(status int) {
+	if w.wroteHeader {
+		return
+	}
+	w.status = status
+	w.wroteHeader = true
+	w.ResponseWriter.WriteHeader(status)
+}
+
+func (w *loggingResponseWriter) Write(body []byte) (int, error) {
+	if !w.wroteHeader {
+		w.WriteHeader(http.StatusOK)
+	}
+	return w.ResponseWriter.Write(body)
+}
+
+func loggingHandler(logger *log.Logger, next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		started := time.Now()
+		response := &loggingResponseWriter{
+			ResponseWriter: w,
+			status:         http.StatusOK,
+		}
+
+		next.ServeHTTP(response, r)
+
+		logger.Printf(
+			"request method=%s path=%s status=%d duration=%s remote=%s",
+			r.Method,
+			r.URL.Path,
+			response.status,
+			time.Since(started).Round(time.Microsecond),
+			r.RemoteAddr,
+		)
+	})
 }
 
 func runToken(args []string) error {
