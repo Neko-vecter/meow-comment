@@ -1,18 +1,23 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { createRoot, type Root } from "react-dom/client";
 import styles from "./styles.module.css";
 import { findLocaleSet, type MeowCommentsMessages } from "./i18n";
 
 export type { MeowCommentsMessages } from "./i18n";
 
 export interface MeowCommentsConfig {
+    /** Element selector or element used to mount MeowComments. */
+    el: string | HTMLElement;
     /** Comment server URL only; the frontend appends `/api` automatically. */
     baseUrl?: string;
     /** Artalk-compatible dark mode switch. `auto` follows the system preference. */
     darkMode?: boolean | "auto";
     /** Locale such as `zh-Hans`, `en`, or `auto`. Unknown locales fall back to English. */
     locale?: string;
-    /** Override the page metadata sent to the one-way comment API. */
-    sourcePath?: string;
+    /** Page path used to group comments, equivalent to Artalk's `pageKey`. */
+    pageKey?: string;
+    /** Override the page title sent to the one-way comment API. */
     pageTitle?: string;
     /** `auto` discovers whether the server requires a CAPTCHA on the first submit. */
     captcha?: "auto" | "required" | "disabled";
@@ -131,7 +136,7 @@ function getApiUrl(baseUrl: string, path: string) {
 
 function getCurrentSourcePath() {
     if (typeof window === "undefined") return "/";
-    return `${window.location.pathname}${window.location.search}` || "/";
+    return window.location.pathname || "/";
 }
 
 function getCurrentPageTitle() {
@@ -163,10 +168,10 @@ function resolveDarkMode(setting: MeowCommentsConfig["darkMode"]) {
     );
 }
 
-export default function MeowComments({
-    config = {},
+function MeowCommentsView({
+    config,
 }: {
-    config?: MeowCommentsConfig;
+    config: MeowCommentsConfig;
 }) {
     const [isDarkMode, setIsDarkMode] = useState(() =>
         resolveDarkMode(config.darkMode),
@@ -297,15 +302,12 @@ export default function MeowComments({
             return;
         }
 
-        let captchaRequired = captchaMode !== "disabled" && !captchaUnavailable;
-        if (captchaRequired) {
+        if (captchaMode !== "disabled" && !captchaUnavailable) {
             if (!captcha) {
                 const captchaResult = await loadCaptcha();
                 if (captchaResult !== "disabled") return;
-                // `auto` mode treats a 404 from /verification as a disabled CAPTCHA.
-                captchaRequired = false;
             }
-            if (captchaRequired && !captchaCode.trim()) {
+            if (!captchaCode.trim()) {
                 setCaptchaDialogError(messages.captchaRequired);
                 setCaptchaDialogOpen(true);
                 return;
@@ -321,7 +323,8 @@ export default function MeowComments({
                     username: trimmedName,
                     email: trimmedEmail,
                     comments: comment,
-                    source_path: config.sourcePath ?? getCurrentSourcePath(),
+                    source_path:
+                        config.pageKey ?? getCurrentSourcePath(),
                     page_title: config.pageTitle ?? getCurrentPageTitle(),
                     verification_uuid: captcha?.uuid ?? "",
                     verification_code: captchaCode.trim(),
@@ -339,11 +342,7 @@ export default function MeowComments({
             setCaptchaDialogOpen(false);
             setStatus({ kind: "success", text: messages.success });
         } catch (error) {
-            if (
-                captchaMode !== "disabled" &&
-                error instanceof RequestError &&
-                error.status === 422
-            ) {
+            if (error instanceof RequestError && error.status === 422) {
                 setCaptcha(null);
                 setCaptchaCode("");
                 const captchaResult = await loadCaptcha();
@@ -563,3 +562,52 @@ export default function MeowComments({
         </section>
     );
 }
+
+function getRootElement(el: string | HTMLElement) {
+    if (typeof el === "string") {
+        const root = document.querySelector<HTMLElement>(el);
+        if (!root) throw new Error(`Element "${el}" not found.`);
+        return root;
+    }
+
+    if (el instanceof HTMLElement) return el;
+    throw new Error("Please provide a valid `el` config for MeowComments.");
+}
+
+export default class MeowComments {
+    private readonly element: HTMLElement;
+    private readonly reactRoot: Root;
+    private config: MeowCommentsConfig;
+
+    constructor(config: MeowCommentsConfig) {
+        this.element = getRootElement(config.el);
+        this.element.innerHTML = "";
+        this.config = config;
+        this.reactRoot = createRoot(this.element);
+        this.reactRoot.render(<MeowCommentsView config={config} />);
+    }
+
+    static init(config: MeowCommentsConfig) {
+        return new MeowComments(config);
+    }
+
+    getConf() {
+        return this.config;
+    }
+
+    getEl() {
+        return this.element;
+    }
+
+    update(config: Partial<MeowCommentsConfig>) {
+        this.config = { ...this.config, ...config };
+        this.reactRoot.render(<MeowCommentsView config={this.config} />);
+    }
+
+    destroy() {
+        this.reactRoot.unmount();
+        this.element.innerHTML = "";
+    }
+}
+
+export const init = MeowComments.init;
