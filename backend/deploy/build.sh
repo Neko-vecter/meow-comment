@@ -10,8 +10,11 @@ repo_root="$(cd -- "${backend_dir}/.." && pwd)"
 output_dir="${PWD}"
 
 if [[ -z "${deb_arch}" ]]; then
-    printf 'DEB_ARCH is required, for example: DEB_ARCH=amd64 %s\n' "$0" >&2
-    exit 64
+    if command -v dpkg >/dev/null 2>&1; then
+        deb_arch="$(dpkg --print-architecture)"
+    else
+        deb_arch="amd64"
+    fi
 fi
 
 case "${deb_arch}" in
@@ -25,19 +28,25 @@ case "${deb_arch}" in
         go_arch="arm"
         go_arm="7"
         ;;
+    armel)
+        go_arch="arm"
+        go_arm="5"
+        ;;
     i386)
         go_arch="386"
         ;;
     ppc64el)
         go_arch="ppc64le"
         ;;
+    s390x)
+        go_arch="s390x"
+        ;;
     riscv64)
         go_arch="riscv64"
         ;;
     *)
-        printf 'Unsupported DEB_ARCH: %s\n' "${deb_arch}" >&2
-        printf 'Supported architectures: amd64 arm64 armhf i386 ppc64el riscv64\n' >&2
-        exit 64
+        printf 'error: unsupported Debian architecture: %s\n' "${deb_arch}" >&2
+        exit 1
         ;;
 esac
 
