@@ -68,7 +68,7 @@ func TestCommentUsesCaptchaOnceAndStoresRequestMetadata(t *testing.T) {
 	requestBody, err := json.Marshal(commentRequest{
 		Username:         "小明",
 		Email:            "xiaoming@example.com",
-		Comments:         "这是一条评论。",
+		Comments:         "这是一条<评论>。",
 		SourcePath:       "/page/1",
 		PageTitle:        "文章标题",
 		VerificationUUID: verification.UUID,
@@ -104,6 +104,9 @@ func TestCommentUsesCaptchaOnceAndStoresRequestMetadata(t *testing.T) {
 	}
 	if comments[0].IPAddress != "203.0.113.10" || comments[0].UserAgent != "test-agent" {
 		t.Fatalf("request metadata was not stored: %#v", comments[0])
+	}
+	if comments[0].Comments != "这是一条&lt;评论&gt;。" {
+		t.Fatalf("comment HTML was not escaped: %q", comments[0].Comments)
 	}
 
 	secondRequest := httptest.NewRequest(http.MethodPost, "/api/comment", bytes.NewReader(requestBody))
