@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import MeowCommentsClient from "./components/MeowCommentsCore";
+import MeowCommentsClient from "meow-comment-ui";
+import "meow-comment-ui/MeowCommentUI.css";
 
 function MeowComments() {
     const pageKey =

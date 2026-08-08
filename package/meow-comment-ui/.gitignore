@@ -1,0 +1,28 @@
+# Package dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Packed npm archive
+*.tgz
+
+# Test output
+coverage/
+.vitest/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Package manager logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.yarn

@@ -13,3 +13,7 @@ coverage.out
 backend/config.json
 
 reference
+
+# Frontend package build output
+package/meow-comment-ui/node_modules/
+package/meow-comment-ui/dist/

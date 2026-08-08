@@ -1,0 +1,27 @@
+import type { MeowCommentsMessages } from "./en";
+
+const zhHans: MeowCommentsMessages = {
+    title: "评论",
+    name: "昵称",
+    email: "邮箱",
+    link: "网址",
+    placeholder: "键入内容...",
+    send: "发送",
+    sending: "发送中...",
+    captcha: "验证码",
+    captchaPlaceholder: "输入验证码",
+    captchaPrompt: "请输入验证码后继续。",
+    reloadCaptcha: "刷新验证码",
+    confirm: "确认",
+    cancel: "取消",
+    success: "评论已提交，感谢你的留言。",
+    required: "请输入昵称、邮箱和评论内容。",
+    invalidEmail: "请输入有效的邮箱地址。",
+    captchaRequired: "请输入验证码。",
+    captchaInvalid: "验证码无效或已过期。",
+    commentFail: "评论提交失败。",
+    networkFail: "无法连接评论服务器。",
+    restoredMsg: "已恢复之前保存的内容。",
+};
+
+export default zhHans;

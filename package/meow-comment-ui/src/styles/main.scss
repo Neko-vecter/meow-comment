@@ -1,0 +1,388 @@
+.artalk {
+  --at-color-font: #2a2e2e;
+  --at-color-meta: #697182;
+  --at-color-border: #eceff2;
+  --at-color-bg: #fff;
+  --at-color-bg-transl: rgba(255, 255, 255, 0.94);
+  --at-color-bg-grey: #f3f4f5;
+  --at-color-main: #0083ff;
+  --at-color-red: #ff5652;
+  --at-color-green: #4caf50;
+
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  color: var(--at-color-font);
+  font-size: 14px;
+  line-height: 1.6em;
+  text-align: left;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  &.atk-dark-mode {
+    --at-color-font: #fff;
+    --at-color-meta: #fff;
+    --at-color-border: #2d3235;
+    --at-color-bg: #1e2224;
+    --at-color-bg-transl: rgba(30, 34, 36, 0.95);
+    --at-color-bg-grey: #46494e;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  input,
+  textarea,
+  button,
+  optgroup,
+  select {
+    font-family: inherit;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  .atk-main-editor {
+    position: relative;
+    overflow: hidden;
+    background: var(--at-color-bg);
+    border: 1px solid var(--at-color-border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+
+  .atk-header {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 14px 0;
+  }
+
+  .atk-field {
+    flex: 1;
+    width: 100%;
+
+    &:not(:last-child) {
+      margin-right: 2px;
+    }
+  }
+
+  .atk-input {
+    flex: 1;
+    width: 100%;
+    padding: 6px 5px;
+    resize: none;
+    outline: none;
+    border: 2px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    font-size: 14px;
+  }
+
+  .atk-textarea-wrap {
+    position: relative;
+  }
+
+  .atk-textarea {
+    display: block;
+    overflow: hidden;
+    color: var(--at-color-font);
+    font-size: 15px;
+    background-color: var(--at-color-bg);
+    border: 2px solid transparent;
+    border-radius: 3px;
+    width: 100%;
+    min-height: 120px;
+    margin-top: 2px;
+    padding: 10px 20px;
+    resize: none;
+    word-wrap: break-word;
+    outline: none;
+  }
+
+  .atk-textarea::placeholder,
+  .atk-input::placeholder,
+  .atk-captcha-input::placeholder {
+    color: var(--at-color-meta);
+    opacity: 0.54;
+  }
+
+  .atk-bottom {
+    display: flex;
+    flex-direction: row;
+    row-gap: 5px;
+    justify-content: space-between;
+    padding: 5px;
+    flex-wrap: wrap;
+  }
+
+  .atk-item,
+  .atk-bottom-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .atk-send-btn {
+    min-width: 7.3em;
+    height: 30px;
+    margin: 0;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    background: var(--at-color-main);
+    color: #fff;
+    font-size: 14px;
+    transition: opacity 0.3s ease-in-out;
+
+    &:active {
+      opacity: 0.9;
+    }
+  }
+
+  .atk-notify-wrap {
+    z-index: 3;
+    position: absolute;
+    right: -2px;
+    bottom: 40px;
+    width: 225px;
+    opacity: 0.83;
+  }
+
+  .atk-notify {
+    display: block;
+    overflow: hidden;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    padding: 5px 15px;
+
+    &:not(:last-child) {
+      margin-bottom: 3px;
+    }
+
+    &.atk-success {
+      background-color: #57d59f;
+    }
+
+    &.atk-error {
+      background-color: #ff6f6c;
+    }
+
+    &.atk-info {
+      background-color: #2ebcfc;
+    }
+  }
+
+  .atk-fade-in {
+    animation: atkFadeIn 0.3s both;
+  }
+
+  .atk-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    background: var(--at-color-bg);
+  }
+
+  .atk-loading-spinner {
+    position: relative;
+    width: 50px;
+    height: 50px;
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform-origin: center center;
+      animation: atkRotate 2s linear infinite;
+    }
+
+    circle {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+      stroke-linecap: round;
+      animation:
+        atkDash 1.5s ease-in-out infinite,
+        atkColor 6s ease-in-out infinite;
+    }
+  }
+
+  .atk-layer-dialog-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+    background: var(--at-color-bg-transl);
+  }
+
+  .atk-layer-dialog {
+    width: 25%;
+  }
+
+  .atk-captcha-body {
+    display: inline;
+    color: var(--at-color-font);
+  }
+
+  .atk-captcha-img {
+    display: inline-block;
+    width: 170px;
+    height: auto;
+    margin-right: 10px;
+    padding-right: 10px;
+    vertical-align: bottom;
+    border-right: 1px solid var(--at-color-border);
+    cursor: pointer;
+  }
+
+  .atk-captcha-input {
+    display: block;
+    width: 100%;
+    color: var(--at-color-font);
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 0 6px;
+    line-height: 34px;
+    outline: none;
+    border: 1px solid var(--at-color-border);
+    border-radius: 3px;
+    background-color: var(--at-color-bg);
+    text-align: center;
+  }
+
+  .atk-layer-dialog-actions {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .atk-dialog-btn {
+    display: block;
+    flex: 1;
+    cursor: pointer;
+    padding: 0 15px;
+    line-height: 30px;
+    outline: none;
+    border: 1px solid var(--at-color-main);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--at-color-main);
+
+    &:active {
+      background: var(--at-color-main);
+      color: #fff;
+    }
+
+    &:not(:last-child) {
+      margin-right: 5px;
+    }
+
+    &.atk-dialog-error {
+      border-color: var(--at-color-red);
+      background: var(--at-color-red);
+      color: #fff;
+    }
+  }
+
+  .atk-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes atkRotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes atkFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes atkDash {
+    0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -35px;
+    }
+    100% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -124px;
+    }
+  }
+
+  @keyframes atkColor {
+    0%,
+    100% {
+      stroke: #ff5652;
+    }
+    40% {
+      stroke: #2196f3;
+    }
+    66% {
+      stroke: #32c787;
+    }
+    80%,
+    90% {
+      stroke: #ffc107;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    .atk-main-editor {
+      margin-bottom: 7px;
+    }
+
+    .atk-send-btn {
+      min-width: 6em;
+    }
+
+    .atk-layer-dialog {
+      width: 90%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atk-notify,
+    .atk-loading-spinner svg,
+    .atk-loading-spinner circle {
+      animation: none;
+    }
+  }
+}

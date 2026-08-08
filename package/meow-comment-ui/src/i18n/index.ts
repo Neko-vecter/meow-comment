@@ -1,13 +1,14 @@
-import en from "./en.json";
-import zhHans from "./zh-Hans.json";
+import en, { type MeowCommentsMessages } from "./en";
+import zhHans from "./zh-Hans";
 
-export type MeowCommentsMessages = typeof en;
+export type { MeowCommentsMessages } from "./en";
 
-// Built-in locales follow Artalk's internal locale map and are bundled with the component.
 export const internal = {
     en,
+    "en-US": en,
     "zh-Hans": zhHans,
-} satisfies Record<string, MeowCommentsMessages>;
+    "zh-CN": zhHans,
+};
 
 export function findLocaleSet(locale?: string): MeowCommentsMessages {
     const requested =
@@ -16,7 +17,7 @@ export function findLocaleSet(locale?: string): MeowCommentsMessages {
                 ? "en"
                 : navigator.language
             : locale;
-    const normalized = requested.replace("_", "-").toLowerCase();
+    const normalized = requested.replace(/_/g, "-").toLowerCase();
 
     if (normalized === "zh" || normalized.startsWith("zh-")) {
         return internal["zh-Hans"];
