@@ -54,10 +54,13 @@ describe("MeowComments", () => {
         const fetchMock = vi.fn();
         vi.stubGlobal("fetch", fetchMock);
         const client = MeowComments.init({ el: "#comments", captcha: "disabled" });
+        const name = document.querySelector<HTMLInputElement>(".atk-name")!;
         const email = document.querySelector<HTMLInputElement>(".atk-email")!;
         const textarea = document.querySelector<HTMLTextAreaElement>(".atk-textarea")!;
+        name.value = "Meow";
         email.value = "invalid";
         textarea.value = "Hello";
+        name.dispatchEvent(new Event("input", { bubbles: true }));
         email.dispatchEvent(new Event("input", { bubbles: true }));
         textarea.dispatchEvent(new Event("input", { bubbles: true }));
         document.querySelector<HTMLButtonElement>(".atk-send-btn")?.click();
@@ -89,7 +92,11 @@ describe("MeowComments", () => {
             source_path: "/article",
             page_title: "Article",
         });
-        expect(document.querySelector(".atk-success")?.textContent).toContain("successfully");
+        await vi.waitFor(() =>
+            expect(document.querySelector(".atk-success")?.textContent).toContain(
+                "successfully",
+            ),
+        );
         client.destroy();
     });
 

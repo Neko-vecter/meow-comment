@@ -1,9 +1,11 @@
 import { copyFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ExtractorLogLevel } from "@microsoft/api-extractor";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
 import dts from "vite-plugin-dts";
+import type { ExtractorMessage } from "@microsoft/api-extractor";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -54,7 +56,18 @@ export default defineConfig({
         dts({
             include: ["src"],
             exclude: ["src/**/*.{spec,test}.ts", "dist"],
-            bundleTypes: true,
+            bundleTypes: {
+                invokeOptions: {
+                    messageCallback: (message: ExtractorMessage) => {
+                        if (
+                            message.messageId === "console-preamble" ||
+                            message.messageId === "console-compiler-version-notice"
+                        ) {
+                            message.logLevel = ExtractorLogLevel.None;
+                        }
+                    },
+                },
+            },
             compilerOptions: {
                 composite: false,
             },

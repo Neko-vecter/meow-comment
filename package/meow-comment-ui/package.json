@@ -28,12 +28,13 @@
     "build": "tsc --noEmit && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "cross-env NODE_OPTIONS=--no-experimental-webstorage vitest run"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@microsoft/api-extractor": "7.58.12",
     "@types/node": "25.9.5",
+    "cross-env": "10.1.0",
     "eslint": "10.7.0",
     "globals": "17.7.0",
     "jsdom": "29.1.1",
