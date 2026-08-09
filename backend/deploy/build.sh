@@ -72,6 +72,7 @@ trap 'rm -rf "${build_root}"' EXIT
 install -d -m 0755 \
     "${package_root}/DEBIAN" \
     "${package_root}/opt/meow-comment" \
+    "${package_root}/usr/sbin" \
     "${package_root}/lib/systemd/system"
 
 build_environment=(CGO_ENABLED=0 GOOS=linux GOARCH="${go_arch}")
@@ -93,6 +94,7 @@ printf 'Building %s version %s for %s...\n' "${package_name}" "${version}" "${de
         -o "${package_root}/opt/meow-comment/meow-commentctl" \
         ./cmd/meow-commentctl
 )
+ln -s /opt/meow-comment/meow-commentctl "${package_root}/usr/sbin/meow-commentctl"
 
 config_source="${backend_dir}/config.json"
 if [[ ! -f "${config_source}" ]]; then

@@ -18,9 +18,9 @@ install -d -o meow-comment -g meow-comment -m 0700 /var/lib/meow-comment
 chown root:meow-comment /opt/meow-comment/config.json
 chmod 0640 /opt/meow-comment/config.json
 
-/opt/meow-comment/meow-commentctl config migrate \
+/usr/sbin/meow-commentctl config migrate \
     --config /opt/meow-comment/config.json >/dev/null
-admin_key_file=$(/opt/meow-comment/meow-commentctl admin-key ensure \
+admin_key_file=$(/usr/sbin/meow-commentctl admin-key ensure \
     --config /opt/meow-comment/config.json)
 if [ -z "${admin_key_file}" ]; then
     echo "meow-comment: admin key path is empty" >&2
