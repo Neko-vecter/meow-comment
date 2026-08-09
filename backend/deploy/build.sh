@@ -87,6 +87,11 @@ printf 'Building %s version %s for %s...\n' "${package_name}" "${version}" "${de
         -ldflags='-s -w' \
         -o "${package_root}/opt/meow-comment/meow-comment" \
         ./cmd/meow-comment
+    env "${build_environment[@]}" go build \
+        -trimpath \
+        -ldflags='-s -w' \
+        -o "${package_root}/opt/meow-comment/meow-commentctl" \
+        ./cmd/meow-commentctl
 )
 
 config_source="${backend_dir}/config.json"

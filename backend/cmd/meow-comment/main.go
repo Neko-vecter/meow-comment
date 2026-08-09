@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"flag"
@@ -10,14 +9,13 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
+	"moew-comment/backend/internal/admin"
 	"moew-comment/backend/internal/config"
 	"moew-comment/backend/internal/httpapi"
 	"moew-comment/backend/internal/store"
-	"moew-comment/backend/internal/token"
 )
 
 func main() {
@@ -36,8 +34,6 @@ func run(args []string) error {
 	switch args[0] {
 	case "serve":
 		return runServe(args[1:])
-	case "token":
-		return runToken(args[1:])
 	case "help", "-h", "--help":
 		printUsage()
 		return nil
@@ -72,6 +68,11 @@ func runServe(args []string) error {
 
 	application := httpapi.New(cfg, database)
 	defer application.Close()
+	adminKey, err := admin.LoadOrCreateKey(cfg.AdminKeyFile)
+	if err != nil {
+		logger.Printf("admin key load failed error=%v", err)
+		return err
+	}
 
 	webServer := &http.Server{
 		Addr:              cfg.Listen,
@@ -81,11 +82,20 @@ func runServe(args []string) error {
 		WriteTimeout:      30 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
+	adminServer := &http.Server{
+		Addr:              cfg.AdminListen,
+		Handler:           loggingHandler(logger, admin.NewHandler(database, adminKey)),
+		ReadHeaderTimeout: 10 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
 
-	serverErrors := make(chan error, 1)
+	serverErrors := make(chan serverError, 2)
 	logger.Printf(
-		"starting server listen=%s db=%s captcha_enabled=%t allowed_sites_enabled=%t allowed_sites=%d",
+		"starting servers listen=%s admin_listen=%s db=%s captcha_enabled=%t allowed_sites_enabled=%t allowed_sites=%d",
 		cfg.Listen,
+		cfg.AdminListen,
 		cfg.DBPath,
 		cfg.CaptchaEnabled,
 		cfg.AllowedSitesEnabled,
@@ -93,7 +103,11 @@ func runServe(args []string) error {
 	)
 	go func() {
 		logger.Printf("server listening address=%s", cfg.Listen)
-		serverErrors <- webServer.ListenAndServe()
+		serverErrors <- serverError{name: "public", err: webServer.ListenAndServe()}
+	}()
+	go func() {
+		logger.Printf("admin server listening address=%s", cfg.AdminListen)
+		serverErrors <- serverError{name: "admin", err: adminServer.ListenAndServe()}
 	}()
 
 	stop := make(chan os.Signal, 1)
@@ -101,23 +115,43 @@ func runServe(args []string) error {
 	defer signal.Stop(stop)
 
 	select {
-	case err := <-serverErrors:
-		if !errors.Is(err, http.ErrServerClosed) {
-			logger.Printf("server stopped with error=%v", err)
-			return fmt.Errorf("run server: %w", err)
+	case event := <-serverErrors:
+		if !errors.Is(event.err, http.ErrServerClosed) {
+			logger.Printf("%s server stopped with error=%v", event.name, event.err)
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			if shutdownErr := shutdownServers(ctx, webServer, adminServer); shutdownErr != nil {
+				logger.Printf("server shutdown failed error=%v", shutdownErr)
+			}
+			return fmt.Errorf("run %s server: %w", event.name, event.err)
 		}
 	case <-stop:
 		logger.Printf("shutdown signal received")
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		if err := webServer.Shutdown(ctx); err != nil {
+		if err := shutdownServers(ctx, webServer, adminServer); err != nil {
 			logger.Printf("server shutdown failed error=%v", err)
-			return fmt.Errorf("shutdown server: %w", err)
+			return fmt.Errorf("shutdown servers: %w", err)
 		}
 	}
-	logger.Printf("server stopped")
+	logger.Printf("servers stopped")
 
 	return nil
+}
+
+type serverError struct {
+	name string
+	err  error
+}
+
+func shutdownServers(ctx context.Context, servers ...*http.Server) error {
+	var firstErr error
+	for _, server := range servers {
+		if err := server.Shutdown(ctx); err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	return firstErr
 }
 
 type loggingResponseWriter struct {
@@ -163,105 +197,9 @@ func loggingHandler(logger *log.Logger, next http.Handler) http.Handler {
 	})
 }
 
-func runToken(args []string) error {
-	if len(args) == 0 {
-		return errors.New("token command is required: create or delete")
-	}
-
-	switch args[0] {
-	case "create":
-		return runTokenCreate(args[1:])
-	case "delete":
-		return runTokenDelete(args[1:])
-	default:
-		return fmt.Errorf("unknown token command: %s", args[0])
-	}
-}
-
-func runTokenCreate(args []string) error {
-	flags := flag.NewFlagSet("token create", flag.ContinueOnError)
-	configPath := flags.String("config", "config.json", "path to JSON config")
-	name := flags.String("name", "", "token key name")
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
-
-	keyName := strings.TrimSpace(*name)
-	if keyName == "" {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Fprint(os.Stdout, "key name: ")
-		value, err := reader.ReadString('\n')
-		if err != nil && len(value) == 0 {
-			return fmt.Errorf("read key name: %w", err)
-		}
-		keyName = strings.TrimSpace(value)
-	}
-	if keyName == "" {
-		return errors.New("key name is required")
-	}
-
-	cfg, err := config.Load(*configPath)
-	if err != nil {
-		return err
-	}
-	database, err := store.Open(cfg.DBPath)
-	if err != nil {
-		return err
-	}
-	defer database.Close()
-
-	rawToken, err := token.Generate()
-	if err != nil {
-		return fmt.Errorf("generate token: %w", err)
-	}
-	created, err := database.CreateToken(keyName, rawToken)
-	if err != nil {
-		return fmt.Errorf("create token: %w", err)
-	}
-
-	fmt.Fprintf(os.Stdout, "name: %s\n", created.Name)
-	fmt.Fprintf(os.Stdout, "id: %s\n", created.ID)
-	fmt.Fprintf(os.Stdout, "token: %s\n", rawToken)
-	return nil
-}
-
-func runTokenDelete(args []string) error {
-	flags := flag.NewFlagSet("token delete", flag.ContinueOnError)
-	configPath := flags.String("config", "config.json", "path to JSON config")
-	name := flags.String("name", "", "token key name")
-	tokenID := flags.String("id", "", "token id")
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
-
-	trimmedName := strings.TrimSpace(*name)
-	trimmedID := strings.TrimSpace(*tokenID)
-	if (trimmedName == "") == (trimmedID == "") {
-		return errors.New("exactly one of --name or --id is required")
-	}
-
-	cfg, err := config.Load(*configPath)
-	if err != nil {
-		return err
-	}
-	database, err := store.Open(cfg.DBPath)
-	if err != nil {
-		return err
-	}
-	defer database.Close()
-
-	if err := database.DeleteToken(trimmedName, trimmedID); err != nil {
-		return fmt.Errorf("delete token: %w", err)
-	}
-
-	fmt.Fprintln(os.Stdout, "token deleted")
-	return nil
-}
-
 func printUsage() {
 	fmt.Fprintln(os.Stderr, "Usage:")
 	fmt.Fprintln(os.Stderr, "  meow-comment serve --config config.json")
-	fmt.Fprintln(os.Stderr, "  meow-comment token create --config config.json")
-	fmt.Fprintln(os.Stderr, "  meow-comment token delete --config config.json --name blog")
-	fmt.Fprintln(os.Stderr, "  meow-comment token delete --config config.json --id TOKEN_ID")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl token create --config config.json")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl token delete --config config.json --name blog")
 }

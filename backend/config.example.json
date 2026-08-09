@@ -1,5 +1,7 @@
 {
   "listen": "127.0.0.1:9100",
+  "admin_listen": "127.0.0.1:9101",
+  "admin_key_file": "/var/lib/meow-comment/admin.key",
   "db_path": "/var/lib/meow-comment/comments.db",
   "proxy_ip_header": "X-Forwarded-For",
   "rss_title": "Meow Comment RSS",
