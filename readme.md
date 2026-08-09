@@ -10,18 +10,13 @@ A lightweight, one-way comment collection system with RSS feed support.
 
 ### [Backend](./backend/)
 
-> [!important]
-> 创建 token 需要在 systemd service 停止的状态下进行。
->
-> 后续会修复这个问题
-
 构建 deb 包
 
 ```shell
 bash ./backend/deploy/build.sh
 ```
 
-### componet package
+### component package
 
 [meow-comment-ui](./package/meow-comment-ui/)
 

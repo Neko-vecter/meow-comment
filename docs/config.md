@@ -8,6 +8,8 @@
 ```json
 {
     "listen": "127.0.0.1:9100",
+    "admin_listen": "127.0.0.1:9101",
+    "admin_key_file": "/var/lib/meow-comment/admin.key",
     "db_path": "/var/lib/meow-comment/comments.db",
     "proxy_ip_header": "X-Forwarded-For",
     "rss_title": "Meow Comment RSS",
@@ -20,8 +22,6 @@
 }
 ```
 
-`proxy_ip_header` 用于指定代理转发客户端 IP 的请求标头，默认值为 `X-Forwarded-For`，也可以配置为其他标头名称。
-
 ## 启动服务
 
 ```shell
@@ -30,33 +30,35 @@
 
 ## RSS Token
 
-> [!note]
-> 创建 token 需要在 systemd service 停止的状态下进行。
->
-> 后续会修复这个问题
-
-创建 token。程序会要求输入 key 名称，并只显示一次明文 token：
+创建 token
 
 ```shell
-meow-comment token create --config config.json
+sudo meow-commentctl token create \
+    --config /opt/meow-comment/config.json \
+    --name blog
 ```
 
-也可以直接传入 key 名称：
+列出当前所有 RSS token
 
 ```shell
-meow-comment token create --config config.json --name blog
+sudo meow-commentctl token list \
+    --config /opt/meow-comment/config.json
 ```
 
-通过 key 名称删除：
+删除 token
 
 ```shell
-meow-comment token delete --config config.json --name blog
+sudo meow-commentctl token delete \
+    --config /opt/meow-comment/config.json \
+    --name blog
 ```
 
-通过 token ID 删除：
+也可以通过 token ID 删除
 
 ```shell
-meow-comment token delete --config config.json --id TOKEN_ID
+sudo meow-commentctl token delete \
+    --config /opt/meow-comment/config.json \
+    --id TOKEN_ID
 ```
 
 RSS token 只保存 SHA-256 摘要，不保存明文。
