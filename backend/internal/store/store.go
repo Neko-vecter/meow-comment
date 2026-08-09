@@ -169,6 +169,29 @@ func (s *Store) CreateToken(name, rawToken string) (Token, error) {
 	return created, nil
 }
 
+func (s *Store) ListTokens() ([]Token, error) {
+	tokens := make([]Token, 0)
+
+	err := s.db.View(func(tx *bbolt.Tx) error {
+		return tx.Bucket(tokensBucket).ForEach(func(_, value []byte) error {
+			var stored Token
+			if err := json.Unmarshal(value, &stored); err != nil {
+				return fmt.Errorf("decode token: %w", err)
+			}
+			tokens = append(tokens, stored)
+			return nil
+		})
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	sort.SliceStable(tokens, func(left, right int) bool {
+		return tokens[left].CreatedAt.After(tokens[right].CreatedAt)
+	})
+	return tokens, nil
+}
+
 func (s *Store) VerifyToken(rawToken string) (bool, error) {
 	hash := token.Hash(rawToken)
 	valid := false

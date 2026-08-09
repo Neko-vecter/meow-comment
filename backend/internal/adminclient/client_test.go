@@ -32,6 +32,13 @@ func TestClientManagesTokensThroughAdminHTTP(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateToken() error = %v", err)
 	}
+	listed, err := client.ListTokens(context.Background())
+	if err != nil {
+		t.Fatalf("ListTokens() error = %v", err)
+	}
+	if len(listed) != 1 || listed[0].ID != created.ID || listed[0].Name != created.Name {
+		t.Fatalf("unexpected listed tokens: %+v", listed)
+	}
 	if err := client.DeleteToken(context.Background(), "", created.ID); err != nil {
 		t.Fatalf("DeleteToken() error = %v", err)
 	}

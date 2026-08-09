@@ -80,6 +80,14 @@ func TestTokenCreateVerifyAndDelete(t *testing.T) {
 		t.Fatalf("expected duplicate name error, got %v", err)
 	}
 
+	tokens, err := database.ListTokens()
+	if err != nil {
+		t.Fatalf("list tokens: %v", err)
+	}
+	if len(tokens) != 1 || tokens[0].Name != "blog" || tokens[0].ID != created.ID {
+		t.Fatalf("unexpected token list: %#v", tokens)
+	}
+
 	if err := database.DeleteToken("", created.ID); err != nil {
 		t.Fatalf("delete token by id: %v", err)
 	}

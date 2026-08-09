@@ -60,6 +60,20 @@ func (c *Client) CreateToken(ctx context.Context, name string) (admin.CreatedTok
 	return response, nil
 }
 
+func (c *Client) ListTokens(ctx context.Context) ([]admin.TokenSummary, error) {
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+admin.TokenPath, nil)
+	if err != nil {
+		return nil, fmt.Errorf("list request: %w", err)
+	}
+	request.Header.Set("Authorization", "Bearer "+c.adminKey)
+
+	var response []admin.TokenSummary
+	if err := c.do(request, http.StatusOK, &response); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 func (c *Client) DeleteToken(ctx context.Context, name, id string) error {
 	query := url.Values{}
 	if strings.TrimSpace(name) != "" {

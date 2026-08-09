@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"moew-comment/backend/internal/store"
 	"moew-comment/backend/internal/token"
@@ -18,6 +19,12 @@ type CreatedToken struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Token string `json:"token"`
+}
+
+type TokenSummary struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Service struct {
@@ -44,11 +51,29 @@ func (s *Service) DeleteToken(name, id string) error {
 	return s.database.DeleteToken(name, id)
 }
 
+func (s *Service) ListTokens() ([]TokenSummary, error) {
+	tokens, err := s.database.ListTokens()
+	if err != nil {
+		return nil, err
+	}
+	summaries := make([]TokenSummary, 0, len(tokens))
+	for _, token := range tokens {
+		summaries = append(summaries, TokenSummary{
+			ID:        token.ID,
+			Name:      token.Name,
+			CreatedAt: token.CreatedAt,
+		})
+	}
+	return summaries, nil
+}
+
 func NewHandler(database *store.Store, key string) http.Handler {
 	service := NewService(database)
 	mux := http.NewServeMux()
 	mux.HandleFunc(TokenPath, func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
+		case http.MethodGet:
+			handleListTokens(service, w)
 		case http.MethodPost:
 			handleCreateToken(service, w, r)
 		case http.MethodDelete:
@@ -65,6 +90,15 @@ func NewHandler(database *store.Store, key string) http.Handler {
 		}
 		mux.ServeHTTP(w, r)
 	})
+}
+
+func handleListTokens(service *Service, w http.ResponseWriter) {
+	tokens, err := service.ListTokens()
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "list_failed", "list tokens failed")
+		return
+	}
+	writeJSON(w, http.StatusOK, tokens)
 }
 
 func authorized(r *http.Request, key string) bool {

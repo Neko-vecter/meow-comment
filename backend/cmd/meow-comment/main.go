@@ -201,5 +201,6 @@ func printUsage() {
 	fmt.Fprintln(os.Stderr, "Usage:")
 	fmt.Fprintln(os.Stderr, "  meow-comment serve --config config.json")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl token create --config config.json")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl token list --config config.json")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl token delete --config config.json --name blog")
 }

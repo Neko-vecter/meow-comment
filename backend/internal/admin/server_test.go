@@ -72,6 +72,34 @@ func TestHandlerRequiresAdminKeyAndManagesTokens(t *testing.T) {
 		t.Fatalf("created token verification = valid:%t error:%v", valid, err)
 	}
 
+	listRequest, err := http.NewRequest(http.MethodGet, server.URL+TokenPath, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listRequest.Header.Set("Authorization", "Bearer "+key)
+	listResponse, err := http.DefaultClient.Do(listRequest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listBody, err := io.ReadAll(listResponse.Body)
+	listResponse.Body.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResponse.StatusCode != http.StatusOK {
+		t.Fatalf("list status = %d", listResponse.StatusCode)
+	}
+	if strings.Contains(string(listBody), "hash") || strings.Contains(string(listBody), created.Token) {
+		t.Fatalf("list response leaked secret: %q", listBody)
+	}
+	var listed []TokenSummary
+	if err := json.Unmarshal(listBody, &listed); err != nil {
+		t.Fatal(err)
+	}
+	if len(listed) != 1 || listed[0].ID != created.ID || listed[0].Name != created.Name {
+		t.Fatalf("unexpected list response: %+v", listed)
+	}
+
 	deleteRequest, err := http.NewRequest(http.MethodDelete, server.URL+TokenPath+"?name=blog", nil)
 	if err != nil {
 		t.Fatal(err)

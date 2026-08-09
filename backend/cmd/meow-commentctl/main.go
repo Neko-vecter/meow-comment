@@ -50,11 +50,42 @@ func runToken(args []string) error {
 	switch args[0] {
 	case "create":
 		return runTokenCreate(args[1:])
+	case "list":
+		return runTokenList(args[1:])
 	case "delete":
 		return runTokenDelete(args[1:])
 	default:
 		return fmt.Errorf("unknown token command: %s", args[0])
 	}
+}
+
+func runTokenList(args []string) error {
+	flags := newFlagSet("token list")
+	configPath := flags.String("config", "config.json", "path to JSON config")
+	keyPath := flags.String("key-file", "", "override admin key file path")
+	adminListen := flags.String("admin-listen", "", "override admin listen address")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	client, err := loadClient(*configPath, *keyPath, *adminListen)
+	if err != nil {
+		return err
+	}
+	tokens, err := client.ListTokens(context.Background())
+	if err != nil {
+		return err
+	}
+	if len(tokens) == 0 {
+		fmt.Fprintln(os.Stdout, "no tokens")
+		return nil
+	}
+	for _, token := range tokens {
+		fmt.Fprintf(os.Stdout, "name: %s\n", token.Name)
+		fmt.Fprintf(os.Stdout, "id: %s\n", token.ID)
+		fmt.Fprintf(os.Stdout, "created_at: %s\n", token.CreatedAt.Format("2006-01-02T15:04:05Z07:00"))
+	}
+	return nil
 }
 
 func runTokenCreate(args []string) error {
@@ -215,6 +246,7 @@ func newFlagSet(name string) *flag.FlagSet {
 func printUsage() {
 	fmt.Fprintln(os.Stderr, "Usage:")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl token create --config config.json [--name blog]")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl token list --config config.json")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl token delete --config config.json --name blog")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl token delete --config config.json --id TOKEN_ID")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl config migrate --config config.json")
