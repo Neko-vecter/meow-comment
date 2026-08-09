@@ -1,6 +1,6 @@
 {
   "name": "meow-comment-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight comment editor for Meow Comment",
   "type": "module",
   "main": "./dist/MeowCommentUI.js",
