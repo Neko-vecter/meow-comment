@@ -57,13 +57,21 @@ for required_command in go git dpkg-deb install; do
     fi
 done
 
-tag="$(git -C "${repo_root}" describe --tags --abbrev=0 --match 'v[0-9]*' HEAD 2>/dev/null || true)"
-if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+tag_description="$(git -C "${repo_root}" describe --tags --long --match 'v[0-9]*' HEAD 2>/dev/null || true)"
+if [[ ! "${tag_description}" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)-([0-9]+)-g([0-9a-f]+)$ ]]; then
     printf 'No reachable version tag found. Expected a tag such as v1.2.3\n' >&2
     exit 65
 fi
-version="${tag#v}"
-printf 'Using nearest version tag %s\n' "${tag}"
+tag="${tag_description%%-*}"
+base_version="${BASH_REMATCH[1]}"
+commit_distance="${BASH_REMATCH[2]}"
+commit_revision="${BASH_REMATCH[3]}"
+if [[ "${commit_distance}" == "0" ]]; then
+    version="${base_version}"
+else
+    version="${base_version}+git${commit_distance}.${commit_revision}"
+fi
+printf 'Using version tag %s (HEAD %s commits from tag)\n' "${tag}" "${commit_distance}"
 output_path="${output_dir}/${package_name}_${version}_${deb_arch}.deb"
 
 build_root="$(mktemp -d "${MEOW_COMMENT_TMPDIR:-/tmp}/meow-comment-build.XXXXXX")"
