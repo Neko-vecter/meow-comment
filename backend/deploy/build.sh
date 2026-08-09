@@ -57,12 +57,13 @@ for required_command in go git dpkg-deb install; do
     fi
 done
 
-tag="$(git -C "${repo_root}" describe --tags --exact-match --match 'v[0-9]*' HEAD 2>/dev/null || true)"
+tag="$(git -C "${repo_root}" describe --tags --abbrev=0 --match 'v[0-9]*' HEAD 2>/dev/null || true)"
 if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    printf 'HEAD must have an exact version tag such as v1.2.3\n' >&2
+    printf 'No reachable version tag found. Expected a tag such as v1.2.3\n' >&2
     exit 65
 fi
 version="${tag#v}"
+printf 'Using nearest version tag %s\n' "${tag}"
 output_path="${output_dir}/${package_name}_${version}_${deb_arch}.deb"
 
 build_root="$(mktemp -d "${MEOW_COMMENT_TMPDIR:-/tmp}/meow-comment-build.XXXXXX")"
