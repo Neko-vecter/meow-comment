@@ -1,42 +1,56 @@
 #!/bin/sh
 set -eu
 
-if ! getent group meow-comment >/dev/null 2>&1; then
-    addgroup --system meow-comment
-fi
-
-if ! id -u meow-comment >/dev/null 2>&1; then
-    adduser --system \
-        --ingroup meow-comment \
-        --home /var/lib/meow-comment \
-        --no-create-home \
-        --shell /usr/sbin/nologin \
-        meow-comment
-fi
-
-install -d -o meow-comment -g meow-comment -m 0700 /var/lib/meow-comment
-chown root:meow-comment /opt/meow-comment/config.json
-chmod 0640 /opt/meow-comment/config.json
-
-/usr/sbin/meow-commentctl config migrate \
-    --config /opt/meow-comment/config.json >/dev/null
-admin_key_file=$(/usr/sbin/meow-commentctl admin-key ensure \
-    --config /opt/meow-comment/config.json)
-if [ -z "${admin_key_file}" ]; then
-    echo "meow-comment: admin key path is empty" >&2
-    exit 1
-fi
-chown meow-comment:meow-comment "${admin_key_file}"
-chmod 0600 "${admin_key_file}"
-
-if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
-    systemctl daemon-reload
-    systemctl enable meow-comment.service >/dev/null 2>&1 || true
-    if systemctl is-active --quiet meow-comment.service; then
-        systemctl restart meow-comment.service
-    else
-        systemctl start meow-comment.service
+if [ "${1:-}" = configure ]; then
+    if ! getent group meow-comment >/dev/null 2>&1; then
+        addgroup --system meow-comment
     fi
+
+    if ! id -u meow-comment >/dev/null 2>&1; then
+        adduser --system \
+            --ingroup meow-comment \
+            --home /var/lib/meow-comment \
+            --no-create-home \
+            --shell /usr/sbin/nologin \
+            meow-comment
+    fi
+
+    install -d -o meow-comment -g meow-comment -m 0700 /var/lib/meow-comment
+    chown root:meow-comment /opt/meow-comment/config.json
+    chmod 0640 /opt/meow-comment/config.json
+
+    /usr/sbin/meow-commentctl config migrate \
+        --config /opt/meow-comment/config.json >/dev/null
+    admin_key_file=$(/usr/sbin/meow-commentctl admin-key ensure \
+        --config /opt/meow-comment/config.json)
+    if [ -z "${admin_key_file}" ]; then
+        echo "meow-comment: admin key path is empty" >&2
+        exit 1
+    fi
+    chown meow-comment:meow-comment "${admin_key_file}"
+    chmod 0600 "${admin_key_file}"
 fi
+
+# Keep this in line with dh_installsystemd. deb-systemd-helper records the
+# administrator's enable/disable choice and works even when systemd is not PID 1.
+case "${1:-}" in
+    configure|abort-upgrade|abort-deconfigure|abort-remove)
+        deb-systemd-helper unmask meow-comment.service >/dev/null || true
+        if deb-systemd-helper --quiet was-enabled meow-comment.service; then
+            deb-systemd-helper enable meow-comment.service >/dev/null || true
+        else
+            deb-systemd-helper update-state meow-comment.service >/dev/null || true
+        fi
+
+        if [ -z "${DPKG_ROOT:-}" ] && [ -d /run/systemd/system ]; then
+            systemctl --system daemon-reload >/dev/null || true
+            if [ -n "${2:-}" ]; then
+                deb-systemd-invoke restart meow-comment.service >/dev/null || true
+            else
+                deb-systemd-invoke start meow-comment.service >/dev/null || true
+            fi
+        fi
+        ;;
+esac
 
 exit 0

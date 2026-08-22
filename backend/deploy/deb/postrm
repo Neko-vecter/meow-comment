@@ -1,8 +1,21 @@
 #!/bin/sh
 set -eu
 
-if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
-    systemctl daemon-reload || true
+case "${1:-}" in
+    remove)
+        # Prevent dangling wants/ symlinks from starting a unit whose package
+        # files have been removed. postinst unmask restores normal operation
+        # on a later reinstall.
+        deb-systemd-helper mask meow-comment.service >/dev/null || true
+        ;;
+    purge)
+        deb-systemd-helper purge meow-comment.service >/dev/null || true
+        deb-systemd-helper unmask meow-comment.service >/dev/null || true
+        ;;
+esac
+
+if [ -z "${DPKG_ROOT:-}" ] && { [ "${1:-}" = remove ] || [ "${1:-}" = purge ]; } && [ -d /run/systemd/system ]; then
+    systemctl --system daemon-reload >/dev/null || true
 fi
 
 exit 0

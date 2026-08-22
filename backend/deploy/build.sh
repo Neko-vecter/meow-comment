@@ -125,6 +125,7 @@ Section: web
 Priority: optional
 Architecture: ${deb_arch}
 Maintainer: ${maintainer}
+Depends: adduser, init-system-helpers (>= 1.9~)
 Description: Meow Comment backend
  A small comment backend service.
 EOF

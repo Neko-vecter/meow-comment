@@ -1,12 +1,11 @@
 #!/bin/sh
 set -eu
 
-case "${1:-}" in
-    remove|deconfigure)
-        if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
-            systemctl stop meow-comment.service >/dev/null 2>&1 || true
-        fi
-        ;;
-esac
+# Keep the service running during upgrades. postinst will restart it after the
+# new unit/binaries have been unpacked, which is the standard
+# dh_installsystemd --restart-after-upgrade lifecycle.
+if [ -z "${DPKG_ROOT:-}" ] && [ "${1:-}" = remove ] && [ -d /run/systemd/system ]; then
+    deb-systemd-invoke stop meow-comment.service >/dev/null || true
+fi
 
 exit 0
