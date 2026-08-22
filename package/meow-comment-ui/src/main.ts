@@ -30,7 +30,6 @@ interface CaptchaResponse {
 interface StoredUser {
     name: string;
     email: string;
-    link: string;
 }
 
 interface StatusMessage {
@@ -47,7 +46,6 @@ interface View {
     root: HTMLElement;
     nameInput: HTMLInputElement;
     emailInput: HTMLInputElement;
-    linkInput: HTMLInputElement;
     textarea: HTMLTextAreaElement;
     sendButton: HTMLButtonElement;
     notifyWrap: HTMLElement;
@@ -68,7 +66,6 @@ interface State {
     captchaMode: NonNullable<MeowCommentsConfig["captcha"]>;
     name: string;
     email: string;
-    link: string;
     comment: string;
     captchaCode: string;
     captcha: CaptchaState | null;
@@ -141,7 +138,6 @@ function getStoredUser(): StoredUser | null {
             return {
                 name: parsed.name,
                 email: parsed.email,
-                link: typeof parsed.link === "string" ? parsed.link : "",
             };
         }
     } catch {
@@ -249,10 +245,6 @@ function renderView(): View {
                     <span class="atk-sr-only" data-label="email"></span>
                     <input class="atk-input atk-email" type="email" name="email" autocomplete="email" maxlength="254" required>
                 </label>
-                <label class="atk-field">
-                    <span class="atk-sr-only" data-label="link"></span>
-                    <input class="atk-input atk-link" type="url" name="link" autocomplete="url">
-                </label>
             </div>
             <div class="atk-textarea-wrap">
                 <textarea class="atk-textarea" name="comments" maxlength="10000" required></textarea>
@@ -278,7 +270,6 @@ function renderView(): View {
         root,
         nameInput: query<HTMLInputElement>(root, ".atk-name"),
         emailInput: query<HTMLInputElement>(root, ".atk-email"),
-        linkInput: query<HTMLInputElement>(root, ".atk-link"),
         textarea: query<HTMLTextAreaElement>(root, ".atk-textarea"),
         sendButton: query<HTMLButtonElement>(root, ".atk-send-btn"),
         notifyWrap: query<HTMLElement>(root, ".atk-notify-wrap"),
@@ -317,7 +308,6 @@ export default class MeowComments {
             captchaMode: config.captcha ?? "auto",
             name: storedUser?.name ?? "",
             email: storedUser?.email ?? "",
-            link: storedUser?.link ?? "",
             comment: initialComment,
             captchaCode: "",
             captcha: null,
@@ -407,9 +397,6 @@ export default class MeowComments {
         this.listen(this.view.emailInput, "input", () => {
             this.state.email = this.view.emailInput.value;
         });
-        this.listen(this.view.linkInput, "input", () => {
-            this.state.link = this.view.linkInput.value;
-        });
         this.listen(this.view.textarea, "input", () => {
             this.state.comment = this.view.textarea.value;
             saveStoredDraft(this.state.comment);
@@ -474,7 +461,6 @@ export default class MeowComments {
 
         this.syncInput(this.view.nameInput, this.state.name, this.state.messages.name);
         this.syncInput(this.view.emailInput, this.state.email, this.state.messages.email);
-        this.syncInput(this.view.linkInput, this.state.link, this.state.messages.link);
         this.view.textarea.value = this.state.comment;
         this.view.textarea.placeholder = this.state.messages.placeholder;
         this.view.textarea.setAttribute("aria-describedby", this.state.status ? this.statusId : "");
@@ -762,7 +748,6 @@ export default class MeowComments {
                 saveStoredUser({
                     name: trimmedName,
                     email: trimmedEmail,
-                    link: this.state.link,
                 });
             }
             this.state.name = trimmedName;

@@ -4,7 +4,6 @@ const zhHans: MeowCommentsMessages = {
     title: "评论",
     name: "昵称",
     email: "邮箱",
-    link: "网址",
     placeholder: "键入内容...",
     send: "发送",
     sending: "发送中...",

@@ -39,6 +39,7 @@ describe("MeowComments", () => {
 
         expect(document.querySelector(".artalk")).not.toBeNull();
         expect(document.querySelector<HTMLInputElement>(".atk-name")?.placeholder).toBe("Name");
+        expect(document.querySelector<HTMLInputElement>(".atk-link")).toBeNull();
 
         client.update({ locale: "zh-CN", darkMode: true });
 
@@ -85,13 +86,15 @@ describe("MeowComments", () => {
         await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
         expect(fetchMock.mock.calls[0]?.[0]).toBe("https://comments.example/api/comment");
-        expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toMatchObject({
+        const payload = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body));
+        expect(payload).toMatchObject({
             username: "Meow",
             email: "meow@example.com",
             comments: "Hello",
             source_path: "/article",
             page_title: "Article",
         });
+        expect(payload).not.toHaveProperty("link");
         await vi.waitFor(() =>
             expect(document.querySelector(".atk-success")?.textContent).toContain(
                 "successfully",

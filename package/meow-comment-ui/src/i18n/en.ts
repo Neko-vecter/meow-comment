@@ -2,7 +2,6 @@ const en = {
     title: "Comments",
     name: "Name",
     email: "Email",
-    link: "Website",
     placeholder: "Leave a comment",
     send: "Send",
     sending: "Sending...",
