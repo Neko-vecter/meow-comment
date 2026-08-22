@@ -24,6 +24,5 @@ require package
 ```sh
 cd ./package/meow-comment-ui
 yarn install
-yarn build
 npm pack
 ```
