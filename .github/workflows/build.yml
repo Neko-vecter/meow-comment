@@ -1,0 +1,50 @@
+name: build-workflow
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-ui:
+    name: Build UI
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: package/meow-comment-ui
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.x'
+          cache: yarn
+          cache-dependency-path: package/meow-comment-ui/yarn.lock
+
+      - name: Install
+        run: |
+          yarn install --immutable
+
+      - name: Build
+        run: |
+          yarn build
+          npm pack
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            meow-comment-ui*.tgz
