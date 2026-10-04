@@ -1,5 +1,5 @@
 {
-  "name": "meow-comment-ui",
+  "name": "@neko-vecter-lab/meow-comment-ui",
   "version": "1.0.3",
   "description": "A lightweight comment editor for Meow Comment",
   "type": "module",

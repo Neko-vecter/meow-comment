@@ -6,6 +6,12 @@ A lightweight, one-way comment collection system with RSS feed support.
 
 前端部分参考 [Artalk](https://github.com/ArtalkJS/Artalk)
 
+## Add package
+
+```shell
+yarn add @neko-vecter-lab/meow-comment-ui
+```
+
 ## File layout
 
 ### [Backend](./backend/)

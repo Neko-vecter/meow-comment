@@ -424,6 +424,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@neko-vecter-lab/meow-comment-ui@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@neko-vecter-lab/meow-comment-ui@workspace:."
+  dependencies:
+    "@eslint/js": "npm:10.0.1"
+    "@microsoft/api-extractor": "npm:7.58.12"
+    "@types/node": "npm:25.9.5"
+    cross-env: "npm:10.1.0"
+    eslint: "npm:10.7.0"
+    globals: "npm:17.7.0"
+    jsdom: "npm:29.1.1"
+    sass: "npm:1.101.3"
+    terser: "npm:5.49.0"
+    typescript: "npm:6.0.3"
+    typescript-eslint: "npm:8.65.0"
+    vite: "npm:8.1.5"
+    vite-plugin-checker: "npm:0.14.5"
+    vite-plugin-dts: "npm:5.0.3"
+    vitest: "npm:4.1.11"
+  languageName: unknown
+  linkType: soft
+
 "@oxc-project/types@npm:=0.139.0":
   version: 0.139.0
   resolution: "@oxc-project/types@npm:0.139.0"
@@ -2185,28 +2207,6 @@ __metadata:
   checksum: 10c0/eb8abf5d22e4d1e090346f5e81b67d23cef14c83940e445da5c44541ad874dc8fb9f6ca236e8258c3a489d9fb5884188a4d7d58773adb9089ac2c0b966796393
   languageName: node
   linkType: hard
-
-"meow-comment-ui@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "meow-comment-ui@workspace:."
-  dependencies:
-    "@eslint/js": "npm:10.0.1"
-    "@microsoft/api-extractor": "npm:7.58.12"
-    "@types/node": "npm:25.9.5"
-    cross-env: "npm:10.1.0"
-    eslint: "npm:10.7.0"
-    globals: "npm:17.7.0"
-    jsdom: "npm:29.1.1"
-    sass: "npm:1.101.3"
-    terser: "npm:5.49.0"
-    typescript: "npm:6.0.3"
-    typescript-eslint: "npm:8.65.0"
-    vite: "npm:8.1.5"
-    vite-plugin-checker: "npm:0.14.5"
-    vite-plugin-dts: "npm:5.0.3"
-    vitest: "npm:4.1.11"
-  languageName: unknown
-  linkType: soft
 
 "minimatch@npm:10.2.3":
   version: 10.2.3
