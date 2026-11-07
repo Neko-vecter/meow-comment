@@ -47,4 +47,7 @@ jobs:
           name: Release ${{ github.ref_name }}
           generate_release_notes: true
           files: |
-            package/meow-comment-ui/meow-comment-ui*.tgz
+            package/meow-comment-ui/neko_vecter-meow-comment-ui*.tgz
+
+      - name: Publish to npm
+        run: npm publish neko_vecter-meow-comment-ui*.tgz --access public
