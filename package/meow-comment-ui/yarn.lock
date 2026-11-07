@@ -424,9 +424,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neko-vecter-lab/meow-comment-ui@workspace:.":
+"@neko_vecter/meow-comment-ui@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@neko-vecter-lab/meow-comment-ui@workspace:."
+  resolution: "@neko_vecter/meow-comment-ui@workspace:."
   dependencies:
     "@eslint/js": "npm:10.0.1"
     "@microsoft/api-extractor": "npm:7.58.12"
