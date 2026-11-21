@@ -1,7 +1,7 @@
 {
   "name": "meow-comment-frontend",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.5",
   "type": "module",
   "scripts": {
     "dev": "react-router dev --open",
