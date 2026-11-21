@@ -1,0 +1,26 @@
+@reference "../../styles/tailwind-entry.css";
+
+@layer components {
+    .inline-alert {
+        @apply flex items-start gap-2 rounded border px-2.5 py-2 text-xs leading-relaxed;
+    }
+    .inline-alert svg {
+        @apply size-4 shrink-0;
+    }
+    .inline-alert.error {
+        border-color: color-mix(in srgb, var(--destructive) 32%, var(--border));
+        background: color-mix(in srgb, var(--destructive) 8%, var(--card));
+        color: var(--destructive);
+    }
+    .inline-alert.info {
+        border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+        background: color-mix(in srgb, var(--primary) 8%, var(--card));
+        color: var(--primary);
+    }
+}
+
+
+@layer components {
+    .inline-alert.error,
+    .inline-alert.info { border-style: solid; }
+}

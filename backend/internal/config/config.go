@@ -32,6 +32,7 @@ type Config struct {
 	CaptchaEnabled      bool     `json:"captcha_enabled"`
 	AllowedSitesEnabled bool     `json:"allowed_sites_enabled"`
 	AllowedSites        []string `json:"allowed_sites"`
+	AdminAllowedOrigins []string `json:"admin_allowed_origins"`
 }
 
 func Load(path string) (Config, error) {
@@ -102,6 +103,11 @@ func (c Config) Validate() error {
 	for _, site := range c.AllowedSites {
 		if _, ok := normalizeOrigin(site); !ok {
 			return fmt.Errorf("allowed_sites contains invalid origin: %q", site)
+		}
+	}
+	for _, origin := range c.AdminAllowedOrigins {
+		if _, ok := normalizeOrigin(origin); !ok {
+			return fmt.Errorf("admin_allowed_origins contains invalid origin: %q", origin)
 		}
 	}
 

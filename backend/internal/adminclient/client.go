@@ -90,6 +90,55 @@ func (c *Client) DeleteToken(ctx context.Context, name, id string) error {
 	return c.do(request, http.StatusNoContent, nil)
 }
 
+func (c *Client) CreateAdminUser(ctx context.Context, username string) (admin.CreatedUser, error) {
+	payload, err := json.Marshal(map[string]string{
+		"username": username,
+		"role":     "admin",
+	})
+	if err != nil {
+		return admin.CreatedUser{}, fmt.Errorf("encode create admin user request: %w", err)
+	}
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+admin.UsersPath, bytes.NewReader(payload))
+	if err != nil {
+		return admin.CreatedUser{}, fmt.Errorf("create admin user request: %w", err)
+	}
+	request.Header.Set("Authorization", "Bearer "+c.adminKey)
+	request.Header.Set("Content-Type", "application/json")
+
+	var response admin.CreatedUser
+	if err := c.do(request, http.StatusCreated, &response); err != nil {
+		return admin.CreatedUser{}, err
+	}
+	return response, nil
+}
+
+func (c *Client) ListUsers(ctx context.Context) ([]admin.UserSummary, error) {
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+admin.UsersPath, nil)
+	if err != nil {
+		return nil, fmt.Errorf("list users request: %w", err)
+	}
+	request.Header.Set("Authorization", "Bearer "+c.adminKey)
+
+	var response []admin.UserSummary
+	if err := c.do(request, http.StatusOK, &response); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (c *Client) DeleteUser(ctx context.Context, id string) error {
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return errors.New("user id is required")
+	}
+	request, err := http.NewRequestWithContext(ctx, http.MethodDelete, c.baseURL+admin.UsersPath+"/"+url.PathEscape(id), nil)
+	if err != nil {
+		return fmt.Errorf("delete user request: %w", err)
+	}
+	request.Header.Set("Authorization", "Bearer "+c.adminKey)
+	return c.do(request, http.StatusNoContent, nil)
+}
+
 func (c *Client) do(request *http.Request, expectedStatus int, result any) error {
 	response, err := c.httpClient.Do(request)
 	if err != nil {

@@ -1,0 +1,144 @@
+@reference "../../../styles/tailwind-entry.css";
+
+@layer components {
+    .identity-table-wrap {
+        @apply w-full;
+    }
+
+    .identity-table {
+        @apply min-w-[900px] border-collapse;
+        background: var(--card);
+    }
+
+    .identity-table th {
+        @apply h-10 whitespace-nowrap border-b px-3 py-0 text-[11px] font-semibold normal-case;
+        border-color: var(--border);
+        background: var(--table-header);
+        color: var(--muted-foreground);
+    }
+
+    .identity-table td {
+        @apply h-12 whitespace-nowrap border-b px-3 py-1.5 text-xs;
+        border-color: var(--border);
+        color: var(--muted-foreground);
+    }
+
+    .identity-table tbody tr {
+        @apply transition-colors;
+    }
+    .identity-table tbody tr:hover { background: var(--muted); }
+
+    .identity-user-row {
+        @apply cursor-pointer;
+    }
+
+    .identity-provider-row {
+        @apply cursor-pointer;
+    }
+
+    .identity-user-row:focus-visible,
+    .identity-provider-row:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: -2px;
+    }
+
+    .identity-name-cell {
+        @apply flex items-center gap-2.5;
+    }
+
+    .identity-avatar {
+        @apply flex size-7 shrink-0 items-center justify-center rounded-md text-[11px] font-semibold;
+        border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+        background: color-mix(in srgb, var(--primary) 12%, var(--card));
+        color: var(--primary);
+    }
+
+    .identity-avatar.is-admin {
+        color: var(--info);
+        border-color: color-mix(in srgb, var(--info) 52%, var(--border));
+        background: var(--info-soft);
+    }
+
+    .identity-avatar-provider {
+        border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+        background: color-mix(in srgb, var(--primary) 12%, var(--card));
+        color: var(--primary);
+    }
+
+    .identity-avatar-provider svg {
+        width: 1rem;
+        height: 1rem;
+        stroke-width: 1.5;
+    }
+
+    .identity-name-cell > div:nth-child(2) {
+        @apply flex min-w-28 flex-col;
+    }
+
+    .identity-name-cell strong {
+        @apply text-xs font-semibold;
+        color: var(--foreground);
+    }
+
+    .identity-name-cell span {
+        @apply text-[10px];
+        color: var(--muted-foreground);
+    }
+
+    .identity-name-cell em {
+        @apply rounded-md px-1.5 py-0.5 text-[9px] font-semibold not-italic;
+        background: var(--info-soft);
+        color: var(--info);
+    }
+
+    .identity-status {
+        @apply inline-flex items-center gap-1.5 text-xs;
+        color: var(--success);
+    }
+
+    .identity-status.is-pending {
+        color: var(--warning);
+    }
+
+    .identity-status-provider {
+        color: var(--primary);
+    }
+
+    .identity-status i {
+        @apply size-1.5 rounded-full bg-current;
+    }
+
+    .identity-muted {
+        color: var(--muted-foreground);
+    }
+
+    .identity-role {
+        @apply text-xs;
+        color: var(--foreground);
+    }
+
+    .identity-role.is-owner {
+        @apply font-medium;
+    }
+
+    .identity-permissions-summary {
+        @apply flex flex-wrap items-center gap-1;
+        max-width: 20rem;
+        white-space: normal;
+    }
+
+    .identity-permission-badge {
+        @apply inline-flex whitespace-nowrap rounded-md px-2 py-0.5 text-[10px];
+        background: var(--muted);
+        color: var(--muted-foreground);
+    }
+
+    .identity-name-cell em { border-radius: var(--radius); }
+    .identity-avatar.is-current,
+    .identity-name-cell em.is-current-account {
+        border-color: color-mix(in srgb, var(--primary) 36%, var(--border));
+        background: color-mix(in srgb, var(--primary) 14%, var(--card));
+        color: var(--primary);
+    }
+
+}

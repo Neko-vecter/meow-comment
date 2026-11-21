@@ -16,6 +16,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"moew-comment/backend/internal/admin"
 	"moew-comment/backend/internal/captcha"
 	"moew-comment/backend/internal/config"
 	"moew-comment/backend/internal/id"
@@ -32,6 +33,7 @@ type Server struct {
 	db       *store.Store
 	captchas captchaService
 	allowed  map[string]struct{}
+	admin    http.Handler
 }
 
 type captchaService interface {
@@ -64,12 +66,17 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
-func New(cfg config.Config, db *store.Store) *Server {
+func New(cfg config.Config, db *store.Store, adminKeys ...string) *Server {
+	var adminKey string
+	if len(adminKeys) > 0 {
+		adminKey = adminKeys[0]
+	}
 	return &Server{
 		cfg:      cfg,
 		db:       db,
 		captchas: captcha.NewStore(verificationTTL),
 		allowed:  config.AllowedOrigins(cfg.AllowedSites),
+		admin:    admin.NewWebHandler(db, cfg.AdminAllowedOrigins, adminKey),
 	}
 }
 
@@ -82,6 +89,10 @@ func (s *Server) Handler() http.Handler {
 }
 
 func (s *Server) handle(w http.ResponseWriter, r *http.Request) {
+	if strings.HasPrefix(r.URL.Path, "/api/admin/") {
+		s.admin.ServeHTTP(w, r)
+		return
+	}
 	if r.URL.Path == "/api/rss" {
 		if r.Method != http.MethodGet {
 			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "method not allowed")

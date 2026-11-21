@@ -1,0 +1,76 @@
+@reference "../../styles/tailwind-entry.css";
+
+.prompt {
+    position: absolute;
+    z-index: 5;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: min(19rem, calc(100vw - 2rem));
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 2px);
+    padding: 1rem;
+    background: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: var(--shadow-floating);
+}
+
+.title {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.description {
+    margin: 0.5rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.875rem;
+}
+
+.actions button {
+    min-height: 2rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    padding: 0 0.75rem;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.actions button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+.actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.actions .cancelButton {
+    border-color: var(--border);
+    background: var(--card);
+    color: var(--foreground);
+}
+
+.cancelButton:hover:not(:disabled) {
+    background: var(--muted);
+}
+
+.confirmButton {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.confirmButton:hover:not(:disabled) {
+    background: var(--primary-hover);
+}

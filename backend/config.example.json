@@ -10,5 +10,8 @@
   "allowed_sites_enabled": true,
   "allowed_sites": [
     "https://blog.xxx.com"
+  ],
+  "admin_allowed_origins": [
+    "https://comment.xxx.com"
   ]
 }

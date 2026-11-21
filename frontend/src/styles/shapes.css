@@ -1,0 +1,88 @@
+/* Shared control and surface geometry. Keep the system on a compact 4px grid. */
+@layer components {
+    .auth-logo,
+    .brand-mark,
+    .loading-mark,
+    .auth-info,
+    .button,
+    .inline-alert,
+    .topbar-avatar,
+    .console-body .nav-item,
+    .help-item,
+    .metric-card,
+    .metric-icon,
+    .panel,
+    .small-avatar,
+    .create-user-card,
+    .create-icon,
+    .role-badge,
+    .status-badge,
+    .auth-methods span,
+    .modal,
+    .modal-icon,
+    .temporary-password,
+    .copy-button,
+    .account-menu-trigger,
+    .account-menu-popover,
+    .account-menu-preference,
+    .account-menu-preference-trigger,
+    .account-menu-suboption,
+    .account-menu-signout,
+    .comment-page-size select,
+    .comment-pagination-button,
+    .identity-search,
+    .identity-action,
+    .identity-settings,
+    .identity-create-form,
+    .identity-create-form input,
+    .identity-avatar,
+    .identity-icon-button {
+        border-radius: var(--radius);
+    }
+
+    .button,
+    .identity-action,
+    .identity-settings,
+    .copy-button,
+    .comment-pagination-button {
+        min-height: 2.25rem;
+    }
+
+    .account-menu-popover,
+    .modal,
+    .panel,
+    .help-version-dialog {
+        border-radius: calc(var(--radius) + 2px);
+        box-shadow: var(--shadow-floating);
+    }
+
+    .console-body .sidebar-icons .nav-item,
+    .console-body .sidebar-icons .help-item,
+    .product-top::before,
+    .password-screen .brand-lockup .brand-mark {
+        border-radius: var(--radius);
+    }
+
+    .remember-field input,
+    .identity-check-column input {
+        border-radius: var(--radius-sm);
+    }
+
+    .product-top {
+        border-radius: calc(var(--radius) + 2px);
+        box-shadow: none;
+    }
+
+    .product-screen,
+    .product-shadow,
+    .identity-name-cell em,
+    .identity-status i {
+        border-radius: 999px;
+    }
+
+    .status-badge { border-radius: 999px; }
+
+    .product-screen {
+        box-shadow: none;
+    }
+}

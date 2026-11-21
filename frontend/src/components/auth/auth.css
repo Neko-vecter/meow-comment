@@ -1,0 +1,152 @@
+@reference "../../styles/tailwind-entry.css";
+
+@layer components {
+    .brand-mark {
+        @apply flex size-9 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground;
+    }
+
+    .auth-screen {
+        @apply grid min-h-screen grid-cols-1 bg-background lg:grid-cols-[minmax(360px,26%)_1fr];
+    }
+    .login-panel {
+        @apply min-h-screen bg-background px-6 py-8 sm:px-12 lg:px-16 lg:py-16;
+    }
+    .auth-brand {
+        @apply mb-14 flex items-center gap-3 whitespace-nowrap lg:mb-20;
+    }
+    .auth-brand strong {
+        @apply text-2xl font-medium tracking-tight text-muted-foreground;
+    }
+    .auth-logo {
+        @apply flex size-9 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground;
+    }
+    .login-heading {
+        @apply hidden;
+    }
+    .auth-form {
+        @apply flex max-w-[340px] flex-col gap-5;
+    }
+    .auth-field {
+        @apply flex flex-col gap-1.5 text-xs font-medium text-foreground;
+    }
+    .auth-field input {
+        @apply min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-ring focus:ring-0;
+    }
+    .password-field {
+        @apply relative;
+    }
+    .password-field input {
+        @apply pr-8;
+    }
+    .password-toggle {
+        @apply absolute right-1 bottom-1 flex size-8 items-center justify-center rounded-md border-0 bg-transparent p-0 text-muted-foreground hover:bg-accent hover:text-accent-foreground;
+    }
+    .password-toggle svg {
+        @apply size-[18px] stroke-[1.5];
+    }
+    .remember-field {
+        @apply mt-1 flex items-center gap-2.5 text-sm text-muted-foreground;
+    }
+    .remember-field input {
+        @apply size-4 appearance-none rounded-sm border border-input bg-background p-0 checked:border-primary checked:bg-primary;
+    }
+    .remember-field input:checked::after {
+        content: "";
+        @apply relative left-[6px] top-[2px] block size-1.5 rotate-45 border-r-2 border-b-2 border-white;
+    }
+    .auth-info {
+        @apply mt-12 flex max-w-[340px] items-start gap-2.5 rounded-md border border-border bg-muted px-3 py-3 text-xs leading-relaxed text-muted-foreground;
+    }
+    .auth-info svg {
+        @apply size-[18px] shrink-0 text-primary;
+    }
+    .oidc-login-options {
+        @apply mt-5 flex max-w-[340px] flex-col gap-2.5;
+    }
+    .oidc-login-divider {
+        @apply flex items-center gap-3 text-[10px] font-medium uppercase tracking-wide text-muted-foreground;
+    }
+    .oidc-login-divider::before,
+    .oidc-login-divider::after {
+        content: "";
+        @apply h-px flex-1 bg-border;
+    }
+    .oidc-login-button {
+        @apply flex min-h-10 w-full items-center justify-center rounded-md border border-border bg-card px-4 text-sm font-medium text-card-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60;
+    }
+    .oidc-login-button:hover {
+        border-color: var(--ring);
+        color: var(--primary);
+    }
+    .auth-preview {
+        @apply hidden min-w-0 flex-col items-center justify-center border-l border-border bg-muted p-10 lg:flex;
+    }
+    .auth-preview h2 {
+        @apply mt-16 text-3xl font-medium tracking-tight text-foreground;
+    }
+    .product-illustration {
+        @apply relative h-28 w-[70%] max-w-[520px];
+    }
+    .product-top {
+        @apply absolute top-0 left-0 right-0 h-20 rounded-md border border-border bg-card;
+    }
+    .product-top::before {
+        content: "";
+        @apply absolute top-2 left-[47%] h-1 w-[6%] rounded bg-muted;
+    }
+    .product-screen {
+        @apply absolute top-6 left-1/2 flex h-10 w-20 -translate-x-1/2 flex-col items-center justify-center rounded-md border border-border bg-secondary text-secondary-foreground;
+    }
+    .product-screen span {
+        @apply text-sm font-bold leading-none;
+    }
+    .product-screen small {
+        @apply mt-1 text-[6px] tracking-widest text-primary;
+    }
+    .product-slot {
+        @apply absolute bottom-4 left-[31%] h-0.5 w-[38%] bg-border;
+    }
+    .product-shadow {
+        @apply hidden;
+    }
+    .password-screen {
+        @apply grid-cols-1;
+    }
+    .password-screen .login-panel {
+        @apply m-auto min-h-0 w-full max-w-[390px] rounded-lg border border-border bg-card p-8;
+    }
+    .password-screen .brand-lockup {
+        @apply mb-8 flex items-center gap-3;
+    }
+    .password-screen .brand-lockup .brand-mark {
+        @apply rounded-sm;
+    }
+    .password-screen .login-heading {
+        @apply mb-6 block border-b border-border pb-5;
+    }
+    .password-screen .login-heading h1 {
+        @apply m-0 mb-2 text-2xl font-semibold text-foreground;
+    }
+    .password-screen .login-heading p {
+        @apply m-0 text-sm text-muted-foreground;
+    }
+
+    .password-screen .auth-form > label {
+        @apply flex flex-col gap-1.5 text-xs font-medium text-foreground;
+    }
+
+    .password-screen .auth-form > label input {
+        @apply min-h-10 rounded-md border border-input bg-background px-3 py-2 text-sm font-normal text-foreground outline-none focus:border-ring;
+    }
+
+    .password-screen .brand-lockup strong { @apply block text-sm font-medium text-foreground; }
+}
+
+@media (max-width: 640px) {
+    .auth-preview {
+        @apply hidden;
+    }
+    .login-panel {
+        @apply min-h-screen px-6 py-8;
+    }
+}

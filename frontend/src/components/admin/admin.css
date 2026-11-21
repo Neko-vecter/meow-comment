@@ -1,0 +1,334 @@
+@reference "../../styles/tailwind-entry.css";
+
+@layer components {
+    .app-shell {
+        @apply min-h-screen w-full bg-background text-foreground;
+    }
+    .console-frame {
+        @apply flex h-screen min-h-screen w-full flex-col overflow-hidden bg-card;
+    }
+    .global-header {
+        @apply flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-4;
+    }
+    .global-brand {
+        @apply flex shrink-0 items-center text-base text-muted-foreground;
+    }
+    .global-brand strong {
+        @apply text-base font-medium tracking-tight text-foreground;
+    }
+    .global-actions {
+        @apply flex shrink-0 items-center justify-end gap-2.5 text-xs text-muted-foreground;
+    }
+    .header-icon {
+        @apply flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground hover:bg-muted hover:text-primary;
+    }
+    .header-icon svg,
+    .theme-toggle svg {
+        @apply size-[18px] stroke-[1.5];
+    }
+    .header-account-label {
+        @apply ml-1;
+    }
+    .header-username {
+        @apply max-w-24 truncate text-foreground;
+    }
+    .theme-toggle {
+        @apply flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground hover:bg-muted hover:text-primary;
+    }
+    .topbar-avatar {
+        @apply flex size-8 items-center justify-center rounded-md text-xs font-semibold;
+        background: var(--primary-soft);
+        color: var(--primary);
+    }
+    .console-body {
+        @apply flex h-[calc(100vh-4rem)] min-h-0 min-w-0 overflow-hidden;
+    }
+    .console-body .sidebar {
+        @apply flex h-full min-h-0 w-64 shrink-0 flex-col overflow-visible border-r border-border bg-card px-3 py-4 text-foreground;
+    }
+    .console-body .sidebar-section-label {
+        @apply mx-3 mb-2 mt-2 text-[10px] font-medium uppercase text-muted-foreground;
+    }
+    .console-body .main-nav {
+        @apply flex flex-col gap-0.5;
+    }
+    .console-body .nav-item {
+        @apply flex min-h-9 w-full items-center gap-2.5 rounded-md border-0 bg-transparent px-3 text-left text-xs text-foreground transition-colors hover:bg-muted hover:text-foreground;
+    }
+    .console-body .nav-item.active {
+        background: var(--primary-soft);
+        color: var(--primary);
+    }
+    .console-body .nav-item svg {
+        @apply size-4 shrink-0 stroke-[1.5];
+    }
+    .nav-count {
+        @apply ml-auto text-[10px];
+        color: var(--primary);
+    }
+    .console-body .sidebar-bottom {
+        @apply mt-auto flex flex-col gap-0.5 border-t border-border pt-3;
+    }
+    .help-item {
+        @apply flex min-h-9 items-center gap-2.5 rounded-md border-0 bg-transparent px-3 text-left text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground;
+    }
+    .help-item svg {
+        @apply size-4 shrink-0 stroke-[1.5];
+    }
+    .help-version-backdrop {
+        @apply fixed inset-0 z-[100] grid place-items-center p-4;
+        background: var(--overlay);
+    }
+    .help-version-dialog {
+        position: relative;
+        width: min(100%, 28rem);
+        border: 1px solid var(--border);
+        border-radius: calc(var(--radius) + 2px);
+        background: var(--popover);
+        color: var(--popover-foreground);
+        box-shadow: var(--shadow-floating);
+    }
+    .help-version-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 1.25rem;
+    }
+    .help-version-eyebrow {
+        margin: 0 0 0.375rem;
+        color: var(--primary);
+        font-size: 0.625rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+    .help-version-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+    .help-version-content {
+        display: grid;
+        gap: 1rem;
+        padding: 1.5rem 1.75rem 1.75rem;
+    }
+    .help-version-content code {
+        overflow-wrap: anywhere;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--muted);
+        padding: 0.75rem;
+        color: var(--foreground);
+        font-size: 0.8125rem;
+    }
+    .help-version-close {
+        display: grid;
+        width: 2.25rem;
+        height: 2.25rem;
+        place-items: center;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted-foreground);
+        opacity: 0.6;
+    }
+    .help-version-close:hover {
+        background: var(--muted);
+        color: var(--foreground);
+    }
+    .help-version-close svg {
+        width: 1.125rem;
+        height: 1.125rem;
+        stroke-width: 1.75;
+    }
+    @media (max-width: 600px) {
+        .help-version-dialog {
+            border-radius: calc(var(--radius) + 2px);
+        }
+        .help-version-content {
+            padding: 1rem;
+        }
+        .help-version-header {
+            gap: 0.75rem;
+            padding: 1.25rem 1rem 1rem;
+        }
+    }
+    .console-body .main-content {
+        @apply h-full min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto bg-card overscroll-contain;
+    }
+    .console-body .identity-main-content {
+        @apply bg-card;
+    }
+    .console-body .content-wrap {
+        @apply max-w-none px-4 pb-9 pt-5;
+    }
+    .console-body .identity-content-wrap {
+        @apply h-full min-h-full p-0;
+    }
+}
+
+@media (max-width: 900px) {
+    .global-brand {
+        @apply basis-auto;
+    }
+    .global-actions {
+        @apply basis-auto;
+    }
+    .console-body .sidebar {
+        min-height: calc(100vh - 4rem);
+    }
+}
+
+@media (max-width: 700px) {
+    .console-frame {
+        @apply h-auto min-h-screen overflow-visible;
+    }
+    .global-header {
+        @apply px-2.5;
+    }
+    .header-account-label,
+    .header-username {
+        @apply hidden;
+    }
+    .global-brand strong { @apply block text-lg; }
+    .console-body {
+        @apply block h-auto min-h-0 overflow-visible;
+    }
+    .console-body .sidebar {
+        @apply h-auto min-h-0 overflow-visible border-r-0 border-b px-2 pb-0 pt-1.5;
+    }
+    .console-body .sidebar-section-label,
+    .console-body .sidebar-bottom {
+        @apply hidden;
+    }
+    .console-body .main-nav {
+        @apply flex-row pb-0;
+    }
+    .console-body .nav-item {
+        @apply flex-1 justify-center rounded-b-none border-b-2 border-transparent;
+    }
+    .console-body .nav-item.active {
+        @apply border-b-primary;
+    }
+    .console-body .content-wrap {
+        @apply px-2.5 pb-7 pt-4;
+    }
+    .console-body .main-content {
+        @apply h-auto min-h-0 overflow-visible;
+    }
+    .console-body .identity-content-wrap {
+        @apply h-auto min-h-0;
+    }
+}
+
+
+@layer components {
+    .console-body .sidebar {
+        @apply w-12 flex-[0_0_3.5rem] px-2;
+    }
+    .sidebar-icons .sidebar-section-label,
+    .sidebar-icons .nav-item > span:not(.nav-count),
+    .sidebar-icons .help-item span { @apply hidden; }
+    .sidebar-icons .nav-item,
+    .sidebar-icons .help-item {
+        @apply relative justify-center px-2;
+    }
+    .sidebar-icons .nav-item svg,
+    .sidebar-icons .help-item svg { @apply size-[18px]; }
+    .sidebar-icons .nav-item[data-tooltip]::after,
+    .sidebar-icons .help-item[data-tooltip]::after {
+        content: attr(data-tooltip);
+        @apply pointer-events-none absolute left-[calc(100%+0.75rem)] top-1/2 z-50 -translate-y-1/2 whitespace-nowrap rounded-md border border-border bg-popover px-3 py-1.5 text-xs font-normal text-popover-foreground opacity-0 shadow-md transition-opacity duration-150;
+    }
+    .sidebar-icons .nav-item[data-tooltip]:hover::after,
+    .sidebar-icons .nav-item[data-tooltip]:focus-visible::after,
+    .sidebar-icons .help-item[data-tooltip]:hover::after,
+    .sidebar-icons .help-item[data-tooltip]:focus-visible::after {
+        @apply opacity-100;
+    }
+
+    @media (min-width: 701px) {
+        .console-body .sidebar-icons .nav-item,
+        .console-body .sidebar-icons .help-item {
+            width: 2.5rem;
+            height: 2.5rem;
+            min-height: 2.5rem;
+            flex: 0 0 2.5rem;
+            justify-content: center;
+            padding: 0;
+        }
+    }
+}
+
+@layer components {
+    .account-menu {
+        @apply relative;
+    }
+    .account-menu-trigger {
+        @apply flex size-9 items-center justify-center rounded-md border border-border bg-card p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground;
+    }
+    .account-menu-trigger .topbar-avatar {
+        @apply size-8 shrink-0;
+    }
+    .account-menu-popover {
+        @apply absolute right-0 top-[calc(100%+0.5rem)] z-30 w-64 border border-border bg-popover p-2 text-popover-foreground shadow-md;
+    }
+    .account-menu-identity {
+        @apply flex items-center gap-3 px-2 pb-3 pt-2;
+    }
+    .account-menu-identity .topbar-avatar {
+        @apply size-9 shrink-0;
+    }
+    .account-menu-identity strong {
+        @apply min-w-0 truncate text-sm font-medium text-foreground;
+    }
+    .account-menu-settings-trigger {
+        @apply flex min-h-9 w-full items-center gap-2 rounded-md border-0 bg-transparent px-2 text-left text-xs text-foreground transition-colors hover:bg-muted;
+    }
+    .account-menu-settings-trigger svg {
+        @apply size-4 shrink-0 text-muted-foreground;
+    }
+    .account-menu-preference {
+        @apply rounded;
+    }
+    .account-menu-preference-trigger {
+        @apply flex min-h-9 w-full items-center gap-2 rounded-md border-0 bg-transparent px-2 text-left text-xs text-foreground transition-colors hover:bg-muted;
+    }
+    .account-menu-preference-trigger > span:first-child {
+        @apply shrink-0;
+    }
+    .account-menu-preference-trigger > svg {
+        @apply ml-1 size-3.5 shrink-0 stroke-[1.5] text-muted-foreground;
+    }
+    .account-menu-current {
+        @apply ml-auto truncate text-muted-foreground;
+    }
+    .account-menu-suboptions {
+        @apply ml-2 flex flex-col border-l border-border pl-2;
+    }
+    .account-menu-suboption {
+        @apply min-h-8 rounded-md border-0 bg-transparent px-2 text-left text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground;
+    }
+    .account-menu-suboption.is-selected {
+        background: color-mix(in srgb, var(--primary) 10%, var(--card));
+        color: var(--primary);
+    }
+    .account-menu-divider {
+        @apply my-1 border-t border-border;
+    }
+    .account-menu-version {
+        @apply flex min-h-9 items-center justify-between gap-3 px-2 text-xs text-muted-foreground;
+    }
+    .account-menu-version code {
+        @apply font-mono text-[11px] text-muted-foreground;
+    }
+    .account-menu-signout {
+        @apply mt-1 flex min-h-9 w-full items-center gap-2 rounded-md border-0 bg-transparent px-2 text-left text-xs text-destructive transition-colors hover:bg-accent;
+    }
+    .account-menu-signout svg {
+        @apply size-4 stroke-[1.5];
+    }
+}

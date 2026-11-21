@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Meow Comment UI | Playground</title>
+    </head>
+    <body>
+        <div id="app">
+            <main id="top" class="layout">
+                <div class="workspace">
+                    <section
+                        class="preview-card"
+                        aria-labelledby="preview-title"
+                    >
+                        <div class="preview-heading">
+                            <div>
+                                <p class="head-dev">Dev PREVIEW</p>
+                                <h2 id="preview-title">Meow Comment UI</h2>
+                            </div>
+                        </div>
+                        <div id="comment-preview"></div>
+                    </section>
+
+                    <aside
+                        class="controls-card"
+                        aria-labelledby="controls-title"
+                    >
+                        <div class="controls-heading">
+                            <div>
+                                <p class="head-dev">CONFIGURATION</p>
+                                <h2 id="controls-title">Preview settings</h2>
+                            </div>
+                        </div>
+                    
+
+                        <label class="control-field">
+                            <span>Appearance</span>
+                            <select data-control="theme">
+                                <option value="auto">Follow system</option>
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                            </select>
+                        </label>
+
+                        <label class="control-field">
+                            <span>Language</span>
+                            <select data-control="locale">
+                                <option value="en">English</option>
+                                <option value="zh-Hans">简体中文</option>
+                            </select>
+                        </label>
+
+                        <label class="control-field">
+                            <span>CAPTCHA</span>
+                            <select data-control="captcha">
+                                <option value="disabled">Disabled</option>
+                                <option value="auto">Automatic</option>
+                                <option value="required">Required</option>
+                            </select>
+                        </label>
+
+                        <label class="control-field">
+                            <span>API base URL</span>
+                            <input
+                                data-control="base-url"
+                                type="url"
+                                placeholder="Same origin (e.g. http://localhost:8080)"
+                                autocomplete="url"
+                            />
+                        </label>
+                    </aside>
+                </div>
+            </main>
+        </div>
+        <script type="module" src="/dev-view/main.ts"></script>
+    </body>
+</html>

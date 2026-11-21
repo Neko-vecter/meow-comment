@@ -1,0 +1,29 @@
+@reference "../../styles/tailwind-entry.css";
+
+@layer components {
+    .table-wrap { @apply overflow-x-auto; }
+
+    .data-table {
+        @apply min-w-[760px] w-full border-collapse text-left;
+        background: var(--card);
+    }
+
+    .data-table th {
+        @apply border-b px-4 py-2 text-[10px] font-medium uppercase;
+        border-color: var(--border);
+        background: var(--table-header);
+        color: var(--muted-foreground);
+    }
+
+    .data-table td {
+        @apply border-b px-4 py-3 text-xs;
+        border-color: var(--border);
+        color: var(--muted-foreground);
+    }
+
+    .data-table tr:last-child td { @apply border-b-0; }
+}
+
+@media (max-width: 700px) {
+    .data-table { @apply min-w-[720px]; }
+}

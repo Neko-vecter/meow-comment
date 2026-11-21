@@ -1,0 +1,53 @@
+@reference "../../../styles/tailwind-entry.css";
+
+@layer components {
+    .comment-pagination {
+        @apply flex min-h-12 items-center justify-between gap-3 border-t px-4 py-2 text-[11px];
+        border-color: var(--border);
+        background: var(--card);
+        color: var(--muted-foreground);
+    }
+
+    .comment-page-size {
+        @apply flex items-center gap-2 whitespace-nowrap;
+    }
+
+    .comment-page-size select {
+        @apply h-9 rounded-md border bg-background px-2 text-xs text-foreground outline-none;
+        border-color: var(--input);
+    }
+
+    .comment-page-size select:focus-visible {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .comment-pagination-nav {
+        @apply flex items-center gap-2;
+    }
+
+    .comment-pagination-button {
+        @apply flex size-9 items-center justify-center rounded-md border bg-background text-muted-foreground transition disabled:cursor-not-allowed disabled:opacity-40;
+        border-color: var(--input);
+    }
+
+    .comment-pagination-button:hover:not(:disabled) {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .comment-pagination-button svg {
+        @apply size-4 stroke-[1.5];
+    }
+
+    .comment-pagination-status {
+        @apply min-w-24 text-center text-[11px];
+        color: var(--muted-foreground);
+    }
+}
+
+@media (max-width: 700px) {
+    .comment-pagination {
+        @apply flex-wrap justify-center;
+    }
+}

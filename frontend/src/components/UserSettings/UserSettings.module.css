@@ -1,0 +1,399 @@
+.overlay {
+    position: fixed;
+    z-index: 60;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+}
+
+.scrim {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: var(--overlay);
+    padding: 0;
+}
+
+.scrim:disabled {
+    cursor: wait;
+    opacity: 1;
+}
+
+.panel {
+    position: relative;
+    display: flex;
+    width: min(100%, 44rem);
+    max-height: min(48rem, calc(100vh - 2rem));
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--foreground);
+    box-shadow: var(--shadow-floating);
+}
+
+.header {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 1.75rem 1.25rem;
+}
+
+.eyebrow {
+    margin: 0 0 0.375rem;
+    color: var(--primary);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.description {
+    margin: 0.375rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.closeButton {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--muted-foreground);
+}
+
+.closeButton:hover:not(:disabled) {
+    background: var(--muted);
+    color: var(--foreground);
+}
+
+.closeButton:focus-visible,
+.cancelButton:focus-visible,
+.saveButton:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+.closeButton svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    stroke-width: 1.75;
+}
+
+.content {
+    display: grid;
+    min-height: 0;
+    gap: 1.25rem;
+    overflow-y: auto;
+    padding: 1.5rem 1.75rem 1.75rem;
+}
+
+.profileCard,
+.securitySection {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--muted);
+    padding: 1rem 1.125rem;
+}
+
+.profileIdentity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.avatar {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: var(--radius);
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.profileHeading {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+.profileHeading strong,
+.sectionHeading h3 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.roleBadge {
+    border-radius: 999px;
+    background: var(--muted);
+    padding: 0.1875rem 0.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.6875rem;
+    font-weight: 500;
+}
+
+.securitySection {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+}
+
+.securityAction {
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    padding: 0.5rem 0.75rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.securityAction:hover:not(:disabled) {
+    border-color: var(--ring);
+    color: var(--primary);
+}
+
+.securityAction:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+.securitySection > .successMessage {
+    grid-column: 1 / -1;
+}
+
+.passwordOverlay {
+    position: fixed;
+    z-index: 70;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+}
+
+.passwordPanel {
+    position: relative;
+    display: grid;
+    width: min(100%, 28rem);
+    gap: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    padding: 1.5rem;
+    color: var(--foreground);
+    box-shadow: var(--shadow-floating);
+}
+
+.passwordHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.passwordHeader h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.passwordHeader p {
+    margin: 0.375rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.sectionHeading > span:last-child,
+.sectionHeading p {
+    margin: 0.25rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.sectionHeading {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.form {
+    display: grid;
+    gap: 0.875rem;
+}
+
+.field {
+    display: grid;
+    gap: 0.375rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.field input {
+    width: 100%;
+    min-height: 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    padding: 0.625rem 0.75rem;
+    color: var(--foreground);
+    font-size: 0.875rem;
+    font-weight: 400;
+    outline: none;
+    transition:
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+}
+
+.field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 16%, transparent);
+}
+
+.field input:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.field input::placeholder {
+    color: var(--muted-foreground);
+}
+
+.passwordHint {
+    margin: -0.25rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.6875rem;
+}
+
+.errorMessage,
+.successMessage {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    border: 1px solid;
+    border-radius: var(--radius);
+    padding: 0.625rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.errorMessage {
+    border-color: color-mix(in srgb, var(--destructive) 36%, var(--border));
+    background: var(--destructive-soft);
+    color: var(--destructive);
+}
+
+.successMessage {
+    border-color: color-mix(in srgb, var(--success) 36%, var(--border));
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+.errorMessage svg,
+.successMessage svg {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    margin-top: 0.0625rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.625rem;
+    margin-top: 0.125rem;
+}
+
+.cancelButton,
+.saveButton {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    padding: 0 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition:
+        background-color 120ms ease,
+        border-color 120ms ease,
+        color 120ms ease;
+}
+
+.cancelButton {
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted-foreground);
+}
+
+.cancelButton:hover:not(:disabled) {
+    background: var(--muted);
+    color: var(--foreground);
+}
+
+.saveButton {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.saveButton:hover:not(:disabled) {
+    background: var(--primary-hover);
+}
+
+.cancelButton:disabled,
+.saveButton:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+@media (max-width: 600px) {
+    .overlay {
+        padding: 0.5rem;
+    }
+
+    .panel {
+        max-height: calc(100vh - 1rem);
+        border-radius: var(--radius);
+    }
+
+    .header {
+        gap: 0.75rem;
+        padding: 1.25rem 1rem 1rem;
+    }
+
+    .content {
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+}

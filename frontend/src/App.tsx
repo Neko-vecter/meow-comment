@@ -1,32 +1,29 @@
-import { useEffect } from "react";
-import MeowCommentsClient from "meow-comment-ui";
-import "meow-comment-ui/MeowCommentUI.css";
+// Establish Tailwind's layer order before component stylesheets are loaded.
+import "./App.css";
+import { lazy, Suspense } from "react";
+import { useLocation } from "react-router";
+import AuthenticatedApp from "./AuthenticatedApp";
 
-function MeowComments() {
-    const pageKey =
-        typeof window === "undefined" ? "/" : window.location.pathname;
-    const pageTitle =
-        typeof document === "undefined" ? "Comments" : document.title;
+const isLayoutPreviewEnabled =
+    import.meta.env.DEV &&
+    import.meta.env.VITE_LAYOUT_PREVIEW === "true";
 
-    useEffect(() => {
-        const meowComments = MeowCommentsClient.init({
-            el: "#artalk-container",
-            baseUrl: "http://127.0.0.1:9100",
-            pageKey,
-            pageTitle,
-            locale: "en",
-            captcha: "auto",
-            darkMode: true,
-        });
+const DevLayoutPreview = import.meta.env.DEV
+    ? lazy(() => import("./dev-preview/DevLayoutPreview"))
+    : null;
 
-        return () => meowComments.destroy();
-    }, [pageKey, pageTitle]);
+export default function App() {
+    const location = useLocation();
+    const showLoginPreview =
+        new URLSearchParams(location.search).get("preview") === "login";
 
-    return <div id="artalk-container" />;
+    if (isLayoutPreviewEnabled && DevLayoutPreview) {
+        return (
+            <Suspense fallback={null}>
+                <DevLayoutPreview showLogin={showLoginPreview} />
+            </Suspense>
+        );
+    }
+
+    return <AuthenticatedApp />;
 }
-
-function App() {
-    return <MeowComments />;
-}
-
-export default App;

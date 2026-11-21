@@ -28,11 +28,17 @@ type TokenSummary struct {
 }
 
 type Service struct {
-	database *store.Store
+	database  *store.Store
+	secretKey []byte
+	oidc      *oidcFlow
 }
 
-func NewService(database *store.Store) *Service {
-	return &Service{database: database}
+func NewService(database *store.Store, adminKeys ...string) *Service {
+	service := &Service{database: database, oidc: newOIDCFlow()}
+	if len(adminKeys) > 0 && strings.TrimSpace(adminKeys[0]) != "" {
+		service.secretKey = deriveOIDCSecretKey(adminKeys[0])
+	}
+	return service
 }
 
 func (s *Service) CreateToken(name string) (CreatedToken, error) {
@@ -68,28 +74,7 @@ func (s *Service) ListTokens() ([]TokenSummary, error) {
 }
 
 func NewHandler(database *store.Store, key string) http.Handler {
-	service := NewService(database)
-	mux := http.NewServeMux()
-	mux.HandleFunc(TokenPath, func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			handleListTokens(service, w)
-		case http.MethodPost:
-			handleCreateToken(service, w, r)
-		case http.MethodDelete:
-			handleDeleteToken(service, w, r)
-		default:
-			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", "method not allowed")
-		}
-	})
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !authorized(r, key) {
-			writeError(w, http.StatusUnauthorized, "unauthorized", "valid admin authorization is required")
-			return
-		}
-		mux.ServeHTTP(w, r)
-	})
+	return newCLIHandler(NewService(database), key)
 }
 
 func handleListTokens(service *Service, w http.ResponseWriter) {

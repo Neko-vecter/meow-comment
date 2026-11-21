@@ -66,13 +66,13 @@ func runServe(args []string) error {
 	}
 	defer database.Close()
 
-	application := httpapi.New(cfg, database)
-	defer application.Close()
 	adminKey, err := admin.LoadOrCreateKey(cfg.AdminKeyFile)
 	if err != nil {
 		logger.Printf("admin key load failed error=%v", err)
 		return err
 	}
+	application := httpapi.New(cfg, database, adminKey)
+	defer application.Close()
 
 	webServer := &http.Server{
 		Addr:              cfg.Listen,

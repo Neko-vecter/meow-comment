@@ -17,3 +17,6 @@ reference
 # Frontend package build output
 package/meow-comment-ui/node_modules/
 package/meow-comment-ui/dist/
+
+# Local frontend environment overrides
+frontend/.env*.local

@@ -29,7 +29,7 @@
     "./dist/*": "./dist/*"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open /dev-view/",
     "build": "tsc --noEmit && vite build",
     "prepack": "yarn run build",
     "lint": "eslint .",

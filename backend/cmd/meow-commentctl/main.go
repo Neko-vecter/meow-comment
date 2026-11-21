@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"moew-comment/backend/internal/admin"
 	"moew-comment/backend/internal/adminclient"
@@ -34,6 +35,8 @@ func run(args []string) error {
 		return runConfig(args[1:])
 	case "admin-key":
 		return runAdminKey(args[1:])
+	case "admin-user":
+		return runAdminUser(args[1:])
 	case "help", "-h", "--help":
 		printUsage()
 		return nil
@@ -41,6 +44,138 @@ func run(args []string) error {
 		printUsage()
 		return fmt.Errorf("unknown command: %s", args[0])
 	}
+}
+
+func runAdminUser(args []string) error {
+	if len(args) == 0 {
+		return errors.New("admin-user command is required: create, list or delete")
+	}
+	switch args[0] {
+	case "create":
+		return runAdminUserCreate(args[1:])
+	case "list":
+		return runAdminUserList(args[1:])
+	case "delete":
+		return runAdminUserDelete(args[1:])
+	default:
+		return fmt.Errorf("unknown admin-user command: %s", args[0])
+	}
+}
+
+func runAdminUserCreate(args []string) error {
+	flags := newFlagSet("admin-user create")
+	configPath := flags.String("config", "config.json", "path to JSON config")
+	keyPath := flags.String("key-file", "", "override admin key file path")
+	adminListen := flags.String("admin-listen", "", "override admin listen address")
+	username := flags.String("username", "", "admin username")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	adminUsername := strings.TrimSpace(*username)
+	if adminUsername == "" {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Fprint(os.Stdout, "admin username: ")
+		value, err := reader.ReadString('\n')
+		if err != nil && len(value) == 0 {
+			return fmt.Errorf("read admin username: %w", err)
+		}
+		adminUsername = strings.TrimSpace(value)
+	}
+	if adminUsername == "" {
+		return errors.New("admin username is required")
+	}
+
+	client, err := loadClient(*configPath, *keyPath, *adminListen)
+	if err != nil {
+		return err
+	}
+	created, err := client.CreateAdminUser(context.Background(), adminUsername)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(os.Stdout, "username: %s\n", created.Username)
+	fmt.Fprintf(os.Stdout, "id: %s\n", created.ID)
+	fmt.Fprintf(os.Stdout, "temporary_password: %s\n", created.TemporaryPassword)
+	return nil
+}
+
+func runAdminUserList(args []string) error {
+	flags := newFlagSet("admin-user list")
+	configPath := flags.String("config", "config.json", "path to JSON config")
+	keyPath := flags.String("key-file", "", "override admin key file path")
+	adminListen := flags.String("admin-listen", "", "override admin listen address")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	client, err := loadClient(*configPath, *keyPath, *adminListen)
+	if err != nil {
+		return err
+	}
+	users, err := client.ListUsers(context.Background())
+	if err != nil {
+		return err
+	}
+	if len(users) == 0 {
+		fmt.Fprintln(os.Stdout, "no users")
+		return nil
+	}
+	for index, user := range users {
+		if index > 0 {
+			fmt.Fprintln(os.Stdout)
+		}
+		fmt.Fprintf(os.Stdout, "username: %s\n", user.Username)
+		fmt.Fprintf(os.Stdout, "id: %s\n", user.ID)
+		fmt.Fprintf(os.Stdout, "role: %s\n", user.Role)
+		fmt.Fprintf(os.Stdout, "must_change_password: %t\n", user.MustChangePassword)
+		fmt.Fprintf(os.Stdout, "authentication_methods: %s\n", strings.Join(user.AuthenticationMethods, ","))
+		fmt.Fprintf(os.Stdout, "created_at: %s\n", user.CreatedAt.Format(time.RFC3339))
+	}
+	return nil
+}
+
+func runAdminUserDelete(args []string) error {
+	flags := newFlagSet("admin-user delete")
+	configPath := flags.String("config", "config.json", "path to JSON config")
+	keyPath := flags.String("key-file", "", "override admin key file path")
+	adminListen := flags.String("admin-listen", "", "override admin listen address")
+	username := flags.String("username", "", "user username")
+	userID := flags.String("id", "", "user id")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+
+	trimmedUsername := strings.TrimSpace(*username)
+	trimmedID := strings.TrimSpace(*userID)
+	if (trimmedUsername == "") == (trimmedID == "") {
+		return errors.New("exactly one of --username or --id is required")
+	}
+
+	client, err := loadClient(*configPath, *keyPath, *adminListen)
+	if err != nil {
+		return err
+	}
+	if trimmedID == "" {
+		users, listErr := client.ListUsers(context.Background())
+		if listErr != nil {
+			return listErr
+		}
+		for _, user := range users {
+			if strings.EqualFold(user.Username, trimmedUsername) {
+				trimmedID = user.ID
+				break
+			}
+		}
+		if trimmedID == "" {
+			return fmt.Errorf("user not found: %s", trimmedUsername)
+		}
+	}
+	if err := client.DeleteUser(context.Background(), trimmedID); err != nil {
+		return err
+	}
+	fmt.Fprintln(os.Stdout, "user deleted")
+	return nil
 }
 
 func runToken(args []string) error {
@@ -252,4 +387,8 @@ func printUsage() {
 	fmt.Fprintln(os.Stderr, "  meow-commentctl config migrate --config config.json")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl admin-key generate")
 	fmt.Fprintln(os.Stderr, "  meow-commentctl admin-key ensure --config config.json")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl admin-user create --config config.json --username admin")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl admin-user list --config config.json")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl admin-user delete --config config.json --username reader")
+	fmt.Fprintln(os.Stderr, "  meow-commentctl admin-user delete --config config.json --id USER_ID")
 }

@@ -1,5 +1,25 @@
 # React + TypeScript + Vite
 
+## Admin layout preview
+
+From the `frontend` directory, copy `.env.development.example` to
+`.env.development.local`, then run:
+
+```sh
+cp .env.development.example .env.development.local
+yarn dev
+```
+
+The preview skips browser login and keeps create, delete, and completion changes
+in memory. Refreshing the page restores the sample data. The preview is only
+available in Vite's development server; the normal production build removes
+the preview entry and mock API branch.
+
+To view the login screen with the sample OIDC provider, open
+`http://localhost:5173/login?preview=login` while the dev server is running.
+The provider button is shown for layout review and does not start a real OIDC
+sign-in.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

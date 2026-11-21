@@ -66,6 +66,7 @@ tag="${tag_description%%-*}"
 base_version="${BASH_REMATCH[1]}"
 commit_distance="${BASH_REMATCH[2]}"
 commit_revision="${BASH_REMATCH[3]}"
+backend_version="backend-${tag}-g${commit_revision:0:7}"
 if [[ "${commit_distance}" == "0" ]]; then
     version="${base_version}"
 else
@@ -94,7 +95,7 @@ printf 'Building %s version %s for %s...\n' "${package_name}" "${version}" "${de
     cd "${backend_dir}"
     env "${build_environment[@]}" go build \
         -trimpath \
-        -ldflags='-s -w' \
+        -ldflags="-s -w -X moew-comment/backend/internal/admin.Version=${backend_version}" \
         -o "${package_root}/opt/meow-comment/meow-comment" \
         ./cmd/meow-comment
     env "${build_environment[@]}" go build \

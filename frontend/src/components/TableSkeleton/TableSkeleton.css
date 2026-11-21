@@ -1,0 +1,23 @@
+@reference "../../styles/tailwind-entry.css";
+
+@layer components {
+    .table-skeleton {
+        @apply flex flex-col gap-2 p-4;
+    }
+
+    .table-skeleton span {
+        @apply h-9 animate-pulse rounded-sm bg-muted;
+    }
+
+    .table-skeleton span:nth-child(2) {
+        @apply w-[82%];
+    }
+
+    .table-skeleton span:nth-child(3) {
+        @apply w-[90%];
+    }
+
+    .table-skeleton span:nth-child(4) {
+        @apply w-[68%];
+    }
+}

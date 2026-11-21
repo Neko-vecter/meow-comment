@@ -1,0 +1,142 @@
+@layer base {
+    :root {
+        color-scheme: light;
+        --radius: 0.625rem;
+
+        --background: #ffffff;
+        --foreground: #18181b;
+        --card: #ffffff;
+        --card-foreground: #18181b;
+        --popover: #ffffff;
+        --popover-foreground: #18181b;
+        --primary: #0f766e;
+        --primary-foreground: #ffffff;
+        --primary-hover: #0d9488;
+        --primary-soft: #ccfbf1;
+        --secondary: #f4f4f5;
+        --secondary-foreground: #27272a;
+        --muted: #f4f4f5;
+        --muted-foreground: #71717a;
+        --subtle-foreground: #a1a1aa;
+        --table-header: #fafafa;
+        --accent: #f4f4f5;
+        --accent-foreground: #27272a;
+        --destructive: #dc2626;
+        --destructive-foreground: #ffffff;
+        --border: #e4e4e7;
+        --input: #e4e4e7;
+        --ring: #0f766e;
+        --success: #15803d;
+        --warning: #b45309;
+        --info: #2563eb;
+        --overlay: rgb(0 0 0 / 40%);
+        --shadow-floating: 0 12px 28px rgb(0 0 0 / 12%);
+        --shadow-menu: 0 8px 18px rgb(0 0 0 / 10%);
+
+        --success-soft: color-mix(in srgb, var(--success) 12%, var(--card));
+        --warning-soft: color-mix(in srgb, var(--warning) 12%, var(--card));
+        --destructive-soft: color-mix(in srgb, var(--destructive) 12%, var(--card));
+        --info-soft: color-mix(in srgb, var(--info) 12%, var(--card));
+    }
+
+    :root.dark {
+        color-scheme: dark;
+        --background: #09090b;
+        --foreground: #fafafa;
+        --card: #0f0f12;
+        --card-foreground: #fafafa;
+        --popover: #111114;
+        --popover-foreground: #fafafa;
+        --primary: #2dd4bf;
+        --primary-foreground: #042f2e;
+        --primary-hover: #5eead4;
+        --primary-soft: #134e4a;
+        --secondary: #18181b;
+        --secondary-foreground: #fafafa;
+        --muted: #18181b;
+        --muted-foreground: #a1a1aa;
+        --subtle-foreground: #71717a;
+        --table-header: color-mix(in srgb, var(--card) 55%, var(--background));
+        --accent: #27272a;
+        --accent-foreground: #fafafa;
+        --destructive: #f87171;
+        --destructive-foreground: #450a0a;
+        --border: #27272a;
+        --input: #3f3f46;
+        --ring: #2dd4bf;
+        --success: #4ade80;
+        --warning: #fbbf24;
+        --info: #60a5fa;
+        --overlay: rgb(0 0 0 / 56%);
+    }
+
+    html,
+    body,
+    #root {
+        @apply min-h-screen;
+    }
+
+    body {
+        @apply m-0 min-w-[320px] bg-background font-sans text-foreground antialiased;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
+
+    button {
+        @apply cursor-pointer;
+    }
+
+    button:disabled {
+        @apply cursor-not-allowed opacity-60;
+    }
+
+    :is(button, input, select, textarea, a, [tabindex]):focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: var(--muted-foreground);
+    }
+}
+
+@layer components {
+    .sr-only {
+        @apply absolute m-[-1px] h-px w-px overflow-hidden whitespace-nowrap border-0 p-0;
+        clip: rect(0, 0, 0, 0);
+    }
+
+    .eyebrow {
+        @apply m-0 text-[10px] font-medium uppercase tracking-wider text-muted-foreground;
+    }
+
+    .button {
+        @apply inline-flex min-h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border px-3 text-xs font-medium transition-colors;
+    }
+
+    .button-primary {
+        @apply border-primary bg-primary text-primary-foreground hover:brightness-95;
+    }
+
+    .button-secondary {
+        @apply border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground;
+    }
+
+    .button-quiet {
+        @apply border-transparent bg-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground;
+    }
+
+    .button-wide {
+        @apply min-h-10 w-full;
+    }
+
+    .text-button {
+        @apply mx-auto mt-5 block border-0 bg-transparent p-1 text-xs text-primary hover:underline;
+    }
+}

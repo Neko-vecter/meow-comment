@@ -1,0 +1,90 @@
+@layer components {
+    .dashboard-page {
+        min-height: calc(100vh - 4rem);
+        background: var(--background);
+        color: var(--foreground);
+    }
+
+    .dashboard-toolbar,
+    .dashboard-list-heading {
+        border-bottom: 1px solid var(--border);
+    }
+
+    .dashboard-toolbar .identity-action svg {
+        @apply size-4 stroke-[1.5];
+    }
+
+    .dashboard-toolbar-count,
+    .dashboard-list-heading > span {
+        color: var(--muted-foreground);
+        font-size: 0.6875rem;
+    }
+
+    .dashboard-toolbar-count { @apply ml-auto shrink-0; }
+    .dashboard-list-heading { @apply flex items-center justify-between px-3 py-3; }
+    .dashboard-list-heading h1 { @apply mb-0.5 text-sm font-semibold; color: var(--foreground); }
+    .dashboard-list-heading p { @apply m-0 text-[11px]; color: var(--muted-foreground); }
+    .dashboard-list-heading > span { @apply uppercase tracking-wider; }
+
+    .dashboard-page .comments-table {
+        @apply min-w-[1000px] border-collapse;
+        background: var(--card);
+    }
+
+    .dashboard-page .comments-table th {
+        @apply h-10 whitespace-nowrap border-b px-3 py-0 text-left text-[11px] font-semibold normal-case;
+        border-color: var(--border);
+        background: var(--table-header);
+        color: var(--muted-foreground);
+    }
+
+    .dashboard-page .comments-table th:nth-child(1) { @apply w-[16%]; }
+    .dashboard-page .comments-table th:nth-child(2) { @apply w-[18%]; }
+    .dashboard-page .comments-table th:nth-child(3) { @apply w-[30%]; }
+    .dashboard-page .comments-table th:nth-child(4) { @apply w-[18%]; }
+    .dashboard-page .comments-table th:nth-child(5) { @apply w-[10%]; }
+    .dashboard-page .comments-table th:nth-child(6) { @apply w-[12%]; }
+
+    .dashboard-page .comments-table td {
+        @apply h-14 whitespace-nowrap border-b px-3 py-1.5 text-xs;
+        border-color: var(--border);
+        color: var(--muted-foreground);
+    }
+
+    .dashboard-page .comments-table tbody tr {
+        @apply cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px];
+    }
+
+    .dashboard-page .comments-table tbody tr:hover { background: var(--muted); }
+    .dashboard-page .comments-table tbody tr:focus-visible { outline-color: var(--ring); }
+
+    .dashboard-page .comments-table .comment-content p {
+        @apply mb-0.5 max-w-[360px] truncate text-xs leading-snug;
+        color: var(--foreground);
+    }
+
+    .dashboard-page .comments-table .comment-content span,
+    .dashboard-page .comments-table .source-cell span { @apply text-[10px]; color: var(--muted-foreground); }
+    .dashboard-page .comments-table .user-cell { @apply gap-2.5; }
+    .dashboard-page .comments-table .small-avatar { @apply size-7 text-[11px] font-semibold; }
+    .dashboard-page .comments-table .user-cell strong { @apply text-xs font-semibold; color: var(--foreground); }
+    .dashboard-page .comments-table .email-cell { @apply max-w-44 truncate text-xs; color: var(--muted-foreground); }
+    .dashboard-page .comments-table .source-cell strong { @apply mb-0.5 block max-w-44 truncate text-[11px] font-normal; color: var(--foreground); }
+    .dashboard-page .comments-table .date-cell { @apply text-[10px]; color: var(--muted-foreground); }
+
+    .dashboard-page .comments-table .status-badge {
+        @apply inline-flex items-center gap-1.5;
+    }
+
+    .dashboard-page .comments-table .status-badge::before { content: ""; @apply size-1.5 rounded-full bg-current; }
+    .dashboard-page .comments-table .complete-button { @apply inline-flex min-h-7 items-center gap-1.5 rounded-md border-0 bg-transparent px-2 text-xs; color: var(--primary); }
+    .dashboard-page .comments-table .complete-button:hover:not(:disabled) { background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary-hover); }
+    .dashboard-page .comments-table .complete-button svg { @apply size-3.5 stroke-[1.5]; }
+}
+
+@media (max-width: 700px) {
+    .dashboard-toolbar-count,
+    .dashboard-list-heading > span { @apply hidden; }
+    .dashboard-page .identity-toolbar-actions { @apply w-full overflow-x-auto; }
+    .dashboard-page .identity-action { @apply shrink-0; }
+}

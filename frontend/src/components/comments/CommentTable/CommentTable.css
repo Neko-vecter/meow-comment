@@ -1,0 +1,42 @@
+@reference "../../../styles/tailwind-entry.css";
+
+@layer components {
+    .comments-table-scroll { overflow-x: auto; overflow-y: hidden; }
+    .comments-table th:first-child { @apply w-[36%]; }
+
+    .comment-content p { @apply mb-0.5 max-w-[330px] truncate text-xs leading-snug; color: var(--foreground); }
+    .comment-content span,
+    .source-cell span { @apply block text-[10px]; color: var(--muted-foreground); }
+    .user-cell { @apply flex items-center gap-2; }
+    .user-cell strong { @apply text-xs font-semibold; color: var(--foreground); }
+
+    .small-avatar {
+        @apply flex size-[26px] shrink-0 items-center justify-center text-[10px];
+        background: var(--primary-soft);
+        color: var(--primary);
+    }
+
+    .admin-avatar {
+        background: color-mix(in srgb, var(--destructive) 14%, var(--card));
+        color: var(--destructive);
+    }
+
+    .source-cell strong { @apply mb-0.5 block max-w-40 truncate text-[11px] font-normal; color: var(--foreground); }
+    .date-cell { @apply whitespace-nowrap text-[10px]; color: var(--muted-foreground); }
+    .complete-button { @apply inline-flex items-center gap-1.5 border-0 bg-transparent px-1 py-1 text-xs disabled:opacity-50; color: var(--primary); }
+    .complete-button:hover:not(:disabled) { color: var(--primary-hover); }
+    .complete-button svg { @apply size-3.5 stroke-[1.5]; }
+
+    .status-badge {
+        @apply inline-flex min-h-5 items-center gap-1.5 px-2 py-0.5 text-[11px];
+        border: 1px solid color-mix(in srgb, var(--success) 55%, var(--border));
+        background: color-mix(in srgb, var(--success) 12%, var(--card));
+        color: var(--success);
+    }
+
+    .status-badge.pending {
+        border-color: color-mix(in srgb, var(--warning) 55%, var(--border));
+        background: color-mix(in srgb, var(--warning) 12%, var(--card));
+        color: var(--warning);
+    }
+}

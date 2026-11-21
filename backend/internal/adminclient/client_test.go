@@ -2,6 +2,7 @@ package adminclient
 
 import (
 	"context"
+	"errors"
 	"net/http/httptest"
 	"path/filepath"
 	"strings"
@@ -41,6 +42,47 @@ func TestClientManagesTokensThroughAdminHTTP(t *testing.T) {
 	}
 	if err := client.DeleteToken(context.Background(), "", created.ID); err != nil {
 		t.Fatalf("DeleteToken() error = %v", err)
+	}
+}
+
+func TestClientManagesUsersThroughAdminHTTP(t *testing.T) {
+	database, err := store.Open(filepath.Join(t.TempDir(), "comments.db"))
+	if err != nil {
+		t.Fatalf("store.Open() error = %v", err)
+	}
+	defer database.Close()
+	key, err := admin.GenerateKey()
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(admin.NewHandler(database, key))
+	defer server.Close()
+
+	client, err := New(strings.TrimPrefix(server.URL, "http://"), key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	created, err := client.CreateAdminUser(context.Background(), "cli-admin")
+	if err != nil {
+		t.Fatalf("CreateAdminUser() error = %v", err)
+	}
+	if created.ID == "" || created.TemporaryPassword == "" {
+		t.Fatalf("unexpected created user: %+v", created)
+	}
+
+	listed, err := client.ListUsers(context.Background())
+	if err != nil {
+		t.Fatalf("ListUsers() error = %v", err)
+	}
+	if len(listed) != 1 || listed[0].ID != created.ID || listed[0].Username != "cli-admin" {
+		t.Fatalf("unexpected listed users: %+v", listed)
+	}
+
+	if err := client.DeleteUser(context.Background(), created.ID); err != nil {
+		t.Fatalf("DeleteUser() error = %v", err)
+	}
+	if _, err := database.GetUser(created.ID); !errors.Is(err, store.ErrUserNotFound) {
+		t.Fatalf("deleted user lookup error = %v", err)
 	}
 }
 
