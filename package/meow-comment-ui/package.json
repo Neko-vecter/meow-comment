@@ -31,7 +31,7 @@
   "scripts": {
     "dev": "vite --open /dev-view/",
     "build": "tsc --noEmit && vite build",
-    "prepack": "yarn run build",
+    "prepack": "pnpm run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "cross-env NODE_OPTIONS=--no-experimental-webstorage vitest run"
