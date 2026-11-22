@@ -207,6 +207,10 @@ export const en = {
         you: "YOU",
     },
     dialog: {
+        externalLinkTitle: "Open external link?",
+        externalLinkWarning: "This link will open outside the management console. Check the destination before continuing.",
+        externalLinkDestination: "Destination",
+        openExternalLink: "Open link",
         accountCreated: "ACCOUNT CREATED",
         copyPassword: "Copy temporary password",
         description:

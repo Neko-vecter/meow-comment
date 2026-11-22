@@ -6,7 +6,8 @@ export interface View {
     root: HTMLElement;
     nameInput: HTMLInputElement;
     emailInput: HTMLInputElement;
-    textarea: HTMLTextAreaElement;
+    editorMount: HTMLElement;
+    toolbar: HTMLElement;
     sendButton: HTMLButtonElement;
     notifyWrap: HTMLElement;
     loading: HTMLElement;

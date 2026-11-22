@@ -1,3 +1,7 @@
+import { Editor } from "@tiptap/core";
+import { Markdown } from "@tiptap/markdown";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
 import {
     getApiUrl,
     RequestError,
@@ -22,8 +26,10 @@ import type {
     State,
     StatusMessage,
     View,
+    MeowCommentsToolbarItem,
 } from "../types";
 import { findLocaleSet } from "../i18n";
+import { renderToolbar, resolveToolbarItems } from "./toolbar";
 import { renderView } from "./ui";
 
 type Cleanup = () => void;
@@ -33,6 +39,7 @@ let instanceId = 0;
 export default class MeowComments {
     private readonly element: HTMLElement;
     private readonly view: View;
+    private readonly editor: Editor;
     private readonly statusId: string;
     private readonly cleanups: Cleanup[] = [];
     private config: MeowCommentsConfig;
@@ -40,8 +47,6 @@ export default class MeowComments {
     private dialog: DialogView | null = null;
     private mediaCleanup: Cleanup | null = null;
     private statusTimer: number | null = null;
-    private resizeTimer: number | null = null;
-    private tabTimer: number | null = null;
     private destroyed = false;
 
     constructor(config: MeowCommentsConfig) {
@@ -75,14 +80,42 @@ export default class MeowComments {
                 : null,
         };
 
-        this.view = renderView();
+        this.view = renderView(
+            resolveToolbarItems(config.toolbar),
+            config.toolbarIcons,
+        );
         this.element.append(this.view.root);
+        this.editor = new Editor({
+            element: this.view.editorMount,
+            extensions: [StarterKit, Underline, Markdown],
+            content: this.state.comment,
+            contentType: "markdown",
+            editorProps: {
+                attributes: {
+                    "aria-label": this.state.messages.placeholder,
+                    "aria-required": "true",
+                    "data-placeholder": this.state.messages.placeholder,
+                },
+            },
+            onUpdate: ({ editor }) => {
+                this.state.comment = editor.getMarkdown();
+                saveStoredDraft(this.state.comment);
+            },
+            onSelectionUpdate: () => this.syncToolbar(),
+        });
+        const editorElement = this.editor.view.dom;
+        editorElement.classList.add("atk-textarea", "atk-prosemirror");
+        editorElement.style.minHeight = "140px";
+        editorElement.style.boxSizing = "border-box";
+        this.listen(this.view.editorMount, "mousedown", (event) => {
+            if (event.target === this.view.editorMount) this.editor.commands.focus();
+        });
         this.bindEvents();
         this.setupDarkMode();
         this.syncView();
 
         if (this.state.status) this.scheduleStatusClear();
-        this.queueTextareaResize();
+        this.syncToolbar();
     }
 
     static init(config: MeowCommentsConfig) {
@@ -102,6 +135,8 @@ export default class MeowComments {
 
         const previousDarkMode = this.config.darkMode;
         const previousCaptchaMode = this.state.captchaMode;
+        const previousToolbarItems = resolveToolbarItems(this.config.toolbar);
+        const previousToolbarIcons = { ...this.config.toolbarIcons };
         this.config = { ...this.config, ...config };
         this.state.messages = this.getMessages(this.config);
         this.state.rememberUser = this.config.rememberUser ?? true;
@@ -115,6 +150,15 @@ export default class MeowComments {
         if (previousDarkMode !== this.config.darkMode) {
             this.setupDarkMode();
         }
+        const nextToolbarItems = resolveToolbarItems(this.config.toolbar);
+        const nextToolbarIcons = this.config.toolbarIcons ?? {};
+        if (
+            !sameToolbarItems(previousToolbarItems, nextToolbarItems) ||
+            !sameToolbarIcons(previousToolbarIcons, nextToolbarIcons)
+        ) {
+            renderToolbar(this.view.toolbar, nextToolbarItems, nextToolbarIcons);
+            this.syncToolbar();
+        }
         this.syncView();
     }
 
@@ -125,12 +169,9 @@ export default class MeowComments {
         this.mediaCleanup = null;
         for (const cleanup of this.cleanups.splice(0)) cleanup();
         if (this.statusTimer !== null) window.clearTimeout(this.statusTimer);
-        if (this.resizeTimer !== null) window.clearTimeout(this.resizeTimer);
-        if (this.tabTimer !== null) window.clearTimeout(this.tabTimer);
         this.statusTimer = null;
-        this.resizeTimer = null;
-        this.tabTimer = null;
         this.closeCaptchaDialog();
+        this.editor.destroy();
         this.element.innerHTML = "";
     }
 
@@ -150,28 +191,12 @@ export default class MeowComments {
         this.listen(this.view.emailInput, "input", () => {
             this.state.email = this.view.emailInput.value;
         });
-        this.listen(this.view.textarea, "input", () => {
-            this.state.comment = this.view.textarea.value;
-            saveStoredDraft(this.state.comment);
-            this.queueTextareaResize();
+        this.listen(this.view.toolbar, "mousedown", (event) => {
+            if ((event.target as HTMLElement).closest("button")) event.preventDefault();
         });
-        this.listen(this.view.textarea, "keydown", (event) => {
-            const keyboardEvent = event as KeyboardEvent;
-            if (keyboardEvent.key !== "Tab") return;
-            keyboardEvent.preventDefault();
-            const textarea = this.view.textarea;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            this.state.comment = `${this.state.comment.slice(0, start)}\t${this.state.comment.slice(end)}`;
-            textarea.value = this.state.comment;
-            if (this.tabTimer !== null) window.clearTimeout(this.tabTimer);
-            this.tabTimer = window.setTimeout(() => {
-                this.tabTimer = null;
-                textarea.selectionStart = start + 1;
-                textarea.selectionEnd = start + 1;
-                this.adaptTextareaHeight();
-            });
-            saveStoredDraft(this.state.comment);
+        this.listen(this.view.toolbar, "click", (event) => {
+            const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button[data-action]");
+            if (button) this.applyToolbarAction(button.dataset.action ?? "");
         });
         this.listen(this.view.sendButton, "click", () => {
             void this.submitComment();
@@ -214,9 +239,9 @@ export default class MeowComments {
 
         this.syncInput(this.view.nameInput, this.state.name, this.state.messages.name);
         this.syncInput(this.view.emailInput, this.state.email, this.state.messages.email);
-        this.view.textarea.value = this.state.comment;
-        this.view.textarea.placeholder = this.state.messages.placeholder;
-        this.view.textarea.setAttribute("aria-describedby", this.state.status ? this.statusId : "");
+        this.editor.view.dom.setAttribute("aria-label", this.state.messages.placeholder);
+        this.editor.view.dom.setAttribute("data-placeholder", this.state.messages.placeholder);
+        this.editor.view.dom.setAttribute("aria-describedby", this.state.status ? this.statusId : "");
         this.view.sendButton.textContent = this.state.messages.send;
         this.view.loading.setAttribute("aria-label", this.state.messages.sending);
         this.view.loading.hidden = !this.state.isSubmitting;
@@ -227,6 +252,7 @@ export default class MeowComments {
         } else {
             this.syncCaptchaDialog();
         }
+        this.syncToolbar();
     }
 
     private syncInput(input: HTMLInputElement, value: string, label: string) {
@@ -265,7 +291,7 @@ export default class MeowComments {
             window.clearTimeout(this.statusTimer);
             this.statusTimer = null;
         }
-        this.view.textarea.setAttribute("aria-describedby", status ? this.statusId : "");
+        this.editor.view.dom.setAttribute("aria-describedby", status ? this.statusId : "");
     }
 
     private scheduleStatusClear() {
@@ -276,19 +302,38 @@ export default class MeowComments {
         }, 3000);
     }
 
-    private queueTextareaResize() {
-        if (this.resizeTimer !== null) window.clearTimeout(this.resizeTimer);
-        this.resizeTimer = window.setTimeout(() => {
-            this.resizeTimer = null;
-            this.adaptTextareaHeight();
-        }, 80);
+    private applyToolbarAction(action: string) {
+        const chain = this.editor.chain().focus();
+        switch (action) {
+            case "bold": chain.toggleBold().run(); break;
+            case "italic": chain.toggleItalic().run(); break;
+            case "underline": chain.toggleUnderline().run(); break;
+            case "strike": chain.toggleStrike().run(); break;
+            case "code": chain.toggleCode().run(); break;
+            case "codeBlock": chain.toggleCodeBlock().run(); break;
+            case "bulletList": chain.toggleBulletList().run(); break;
+            case "orderedList": chain.toggleOrderedList().run(); break;
+            case "blockquote": chain.toggleBlockquote().run(); break;
+            case "emoji": chain.insertContent("🙂").run(); break;
+            default: return;
+        }
+        this.syncToolbar();
     }
 
-    private adaptTextareaHeight() {
-        const textarea = this.view.textarea;
-        const diff = textarea.offsetHeight - textarea.clientHeight;
-        textarea.style.height = "0px";
-        textarea.style.height = `${textarea.scrollHeight + diff}px`;
+    private syncToolbar() {
+        const states = [
+            ["bold", "bold"], ["italic", "italic"], ["strike", "strike"],
+            ["underline", "underline"], ["code", "code"], ["codeBlock", "codeBlock"],
+            ["bulletList", "bulletList"],
+            ["orderedList", "orderedList"], ["blockquote", "blockquote"],
+        ] as const;
+        for (const [action, markOrNode] of states) {
+            const button = this.view.toolbar.querySelector<HTMLButtonElement>(`[data-action="${action}"]`);
+            if (!button) continue;
+            const active = this.editor.isActive(markOrNode);
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-pressed", String(active));
+        }
     }
 
     private renderCaptchaDialog() {
@@ -386,7 +431,7 @@ export default class MeowComments {
         const trimmedComment = this.state.comment.trim();
 
         if (!trimmedComment) {
-            this.view.textarea.focus();
+            this.editor.commands.focus();
             return;
         }
         if (!trimmedName || !trimmedEmail) {
@@ -450,6 +495,7 @@ export default class MeowComments {
             this.state.name = trimmedName;
             this.state.email = trimmedEmail;
             this.state.comment = "";
+            this.editor.commands.clearContent();
             this.state.captcha = null;
             this.state.captchaCode = "";
             this.closeCaptchaDialog();
@@ -501,4 +547,21 @@ export default class MeowComments {
         await this.submitComment();
         this.state.captchaConfirming = false;
     }
+}
+
+function sameToolbarItems(
+    first: MeowCommentsToolbarItem[],
+    second: MeowCommentsToolbarItem[],
+) {
+    return first.length === second.length && first.every((item, index) => item === second[index]);
+}
+
+function sameToolbarIcons(
+    first: Partial<Record<MeowCommentsToolbarItem, string>>,
+    second: Partial<Record<MeowCommentsToolbarItem, string>>,
+) {
+    const keys = new Set([...Object.keys(first), ...Object.keys(second)]);
+    return [...keys].every((key) =>
+        first[key as MeowCommentsToolbarItem] === second[key as MeowCommentsToolbarItem],
+    );
 }

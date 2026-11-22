@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
 import { CommentPagination } from "../../components/comments/CommentPagination";
 import { CommentTable } from "../../components/comments/CommentTable";
+import { CommentMarkdown } from "../../components/comments/CommentMarkdown";
 import type { AdminOutletContext } from "../../components/admin/admin-context";
 import { DrawerCard } from "../../components/DrawerCard";
 import { EmptyState } from "../../components/EmptyState";
@@ -220,7 +221,11 @@ export default function OverviewRoute() {
                                     id: "comment-content",
                                     type: "content",
                                     label: t.comments.commentContent,
-                                    value: selectedComment.comments,
+                                    value: (
+                                        <CommentMarkdown
+                                            source={selectedComment.comments}
+                                        />
+                                    ),
                                 },
                             ],
                         },

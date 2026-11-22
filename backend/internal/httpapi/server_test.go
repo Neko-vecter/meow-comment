@@ -106,8 +106,8 @@ func TestCommentUsesCaptchaOnceAndStoresRequestMetadata(t *testing.T) {
 	if comments[0].IPAddress != "203.0.113.10" || comments[0].UserAgent != "test-agent" {
 		t.Fatalf("request metadata was not stored: %#v", comments[0])
 	}
-	if comments[0].Comments != "这是一条&lt;评论&gt;。" {
-		t.Fatalf("comment HTML was not escaped: %q", comments[0].Comments)
+	if comments[0].Comments != "这是一条<评论>。" {
+		t.Fatalf("comment Markdown was not stored unchanged: %q", comments[0].Comments)
 	}
 
 	secondRequest := httptest.NewRequest(http.MethodPost, "/api/comment", bytes.NewReader(requestBody))

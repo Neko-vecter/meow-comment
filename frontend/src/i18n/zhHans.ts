@@ -205,6 +205,10 @@ export const zhHans: Translation = {
         you: "当前账户",
     },
     dialog: {
+        externalLinkTitle: "确认打开外部链接？",
+        externalLinkWarning: "此链接会在管理台之外打开。继续前请核对目标地址。",
+        externalLinkDestination: "目标地址",
+        openExternalLink: "打开链接",
         accountCreated: "ACCOUNT CREATED",
         copyPassword: "复制临时密码",
         description:

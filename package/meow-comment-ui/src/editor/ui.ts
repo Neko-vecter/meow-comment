@@ -1,7 +1,12 @@
 import { query } from "../lib/dom";
 import type { View } from "../types";
+import type { MeowCommentsToolbarItem } from "../types";
+import { renderToolbar } from "./toolbar";
 
-export function renderView(): View {
+export function renderView(
+    toolbarItems: MeowCommentsToolbarItem[],
+    toolbarIcons: Partial<Record<MeowCommentsToolbarItem, string>> = {},
+): View {
     const root = document.createElement("section");
     root.className = "artalk";
     root.innerHTML = `
@@ -17,10 +22,21 @@ export function renderView(): View {
                 </label>
             </div>
             <div class="atk-textarea-wrap">
-                <textarea class="atk-textarea" name="comments" maxlength="10000" required></textarea>
             </div>
             <div class="atk-bottom">
-                <div class="atk-item atk-bottom-left"></div>
+                <div class="atk-item atk-bottom-left">
+                    <div class="atk-editor-toolbar" role="toolbar" aria-label="Formatting">
+                        <button class="atk-editor-tool" type="button" data-action="bold" aria-label="Bold"><strong>B</strong></button>
+                        <button class="atk-editor-tool" type="button" data-action="italic" aria-label="Italic"><em>I</em></button>
+                        <button class="atk-editor-tool" type="button" data-action="underline" aria-label="Underline"><u>U</u></button>
+                        <button class="atk-editor-tool" type="button" data-action="strike" aria-label="Strikethrough"><s>S</s></button>
+                        <span class="atk-editor-tool-separator" aria-hidden="true"></span>
+                        <button class="atk-editor-tool" type="button" data-action="code" aria-label="Inline code">{ }</button>
+                        <button class="atk-editor-tool" type="button" data-action="blockquote" aria-label="Quote">66</button>
+                        <button class="atk-editor-tool" type="button" data-action="codeBlock" aria-label="Code block">&lt;/&gt;</button>
+                        <button class="atk-editor-tool" type="button" data-action="emoji" aria-label="Insert emoji">☻</button>
+                    </div>
+                </div>
                 <div class="atk-item">
                     <button class="atk-send-btn" type="button"></button>
                 </div>
@@ -36,13 +52,16 @@ export function renderView(): View {
         </div>
     `;
 
-    return {
+    const view = {
         root,
         nameInput: query<HTMLInputElement>(root, ".atk-name"),
         emailInput: query<HTMLInputElement>(root, ".atk-email"),
-        textarea: query<HTMLTextAreaElement>(root, ".atk-textarea"),
+        editorMount: query<HTMLElement>(root, ".atk-textarea-wrap"),
+        toolbar: query<HTMLElement>(root, ".atk-editor-toolbar"),
         sendButton: query<HTMLButtonElement>(root, ".atk-send-btn"),
         notifyWrap: query<HTMLElement>(root, ".atk-notify-wrap"),
         loading: query<HTMLElement>(root, ".atk-loading"),
     };
+    renderToolbar(view.toolbar, toolbarItems, toolbarIcons);
+    return view;
 }

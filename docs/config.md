@@ -96,3 +96,15 @@ sudo meow-commentctl admin-user delete \
     --config /opt/meow-comment/config.json \
     --id USER_ID
 ```
+
+## ui config
+
+### Toolbar options
+
+```ts
+MeowComments.init({
+    el: "#comments",
+    toolbar: ["bold", "italic", "strike", "code", "blockquote"],
+    toolbarIcons: { bold: "B*", code: "</>" },
+});
+```

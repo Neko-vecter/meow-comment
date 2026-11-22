@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-ui:
-    name: Build UI
+    name: Build package/meow-comment-ui
     runs-on: ubuntu-latest
 
     defaults:
@@ -27,12 +27,12 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24.x'
-          cache: yarn
-          cache-dependency-path: package/meow-comment-ui/yarn.lock
+          cache: pnpm
+          cache-dependency-path: package/meow-comment-ui/pnpm-lock.yaml
 
       - name: Install
         run: |
-          yarn install --immutable
+          pnpm install --frozen-lockfile
 
       - name: Build
         run: |

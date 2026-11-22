@@ -1,6 +1,7 @@
 import type { Comment } from "../../../types";
 import { formatDate } from "../../../utils";
 import { useI18n } from "../../../i18n";
+import { CommentMarkdown } from "../CommentMarkdown";
 import "../../shared/tables.css";
 import "./CommentTable.css";
 
@@ -63,7 +64,10 @@ export function CommentTable({
                                 </td>
                                 <td>
                                     <div className="comment-content">
-                                        <p>{comment.comments}</p>
+                                        <CommentMarkdown
+                                            compact
+                                            source={comment.comments}
+                                        />
                                     </div>
                                 </td>
                                 <td>

@@ -7,7 +7,7 @@
     "url": "git+https://github.com/Neko-vecter/meow-comment.git"
   },
   "type": "module",
-  "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e",
+  "packageManager": "pnpm@12.22.0+sha512.894940a3d9a57dfa6fd373990fb4e41e09c2f2d76d982ed1d75275d39267f988fb4e2d40900cbe9921c68d97c67aa1a1096d276633db248f7b34927ac9ddb7a4",
   "main": "./dist/MeowCommentUI.js",
   "module": "./dist/MeowCommentUI.mjs",
   "types": "./dist/main.d.ts",
@@ -52,5 +52,11 @@
     "vite-plugin-checker": "0.14.5",
     "vite-plugin-dts": "5.0.3",
     "vitest": "4.1.11"
+  },
+  "dependencies": {
+    "@tiptap/core": "^3.35.0",
+    "@tiptap/extension-underline": "^3.35.0",
+    "@tiptap/markdown": "^3.35.0",
+    "@tiptap/starter-kit": "^3.35.0"
   }
 }

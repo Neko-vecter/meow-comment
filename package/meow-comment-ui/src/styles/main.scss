@@ -112,24 +112,134 @@
 
   .atk-textarea-wrap {
     position: relative;
+    margin-bottom: 0;
+    background: transparent;
+  }
+
+  .atk-editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0;
+  }
+
+  .atk-editor-tool {
+    display: inline-flex;
+    min-width: 26px;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--at-color-meta);
+    cursor: pointer;
+    font-size: 12px;
+
+    &:hover,
+    &.is-active {
+      background: var(--at-color-bg-grey);
+      color: var(--at-color-font);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--at-color-meta);
+      outline-offset: 1px;
+    }
+  }
+
+  .atk-editor-tool-separator {
+    width: 1px;
+    height: 18px;
+    margin: 0 3px;
+    background: var(--at-color-border);
   }
 
   .atk-textarea {
+    position: relative;
     display: block;
-    overflow: hidden;
     width: 100%;
-    min-height: 116px;
-    margin-top: 4px;
-    padding: 12px 20px 16px;
-    resize: none;
+    min-height: 140px;
+    margin-top: 0;
+    padding: 14px 16px 8px;
     outline: none;
-    border: 1px solid transparent;
+    border: 0;
     border-radius: 0;
-    background-color: var(--at-color-bg);
+    background-color: transparent;
+    box-shadow: none;
+    cursor: text;
     color: var(--at-color-font);
     font-size: 14px;
     line-height: 1.65;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+
+    &:focus {
+      outline: none;
+      border: 0;
+      box-shadow: none;
+    }
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    &:has(> p:only-child > br.ProseMirror-trailingBreak)::before {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      color: var(--at-color-meta);
+      content: attr(data-placeholder);
+      opacity: 0.78;
+      pointer-events: none;
+    }
+
+    blockquote {
+      margin: 0.5em 0;
+      padding-left: 12px;
+      border-left: 3px solid var(--at-color-border);
+      color: var(--at-color-meta);
+    }
+
+    ul,
+    ol {
+      padding-left: 1.5em;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--at-color-bg-grey);
+      white-space: pre;
+    }
+
+    code {
+      padding: 0.1em 0.3em;
+      border-radius: 4px;
+      background: var(--at-color-bg-grey);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    pre code {
+      padding: 0;
+      background: transparent;
+    }
+  }
+
+  .atk-textarea.ProseMirror,
+  .atk-textarea .ProseMirror {
+    min-height: inherit;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   .atk-textarea::placeholder,
@@ -435,8 +545,12 @@
     }
 
     .atk-textarea {
-      min-height: 104px;
-      padding: 10px 16px 14px;
+      min-height: 140px;
+      padding: 12px 14px 8px;
+    }
+
+    .atk-editor-toolbar {
+      padding: 0;
     }
 
     .atk-bottom {

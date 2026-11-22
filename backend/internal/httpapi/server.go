@@ -6,7 +6,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"html"
 	"io"
 	"net"
 	"net/http"
@@ -257,7 +256,7 @@ func (s *Server) handleComment(w http.ResponseWriter, r *http.Request) {
 		ID:         commentID,
 		Username:   strings.TrimSpace(request.Username),
 		Email:      strings.TrimSpace(request.Email),
-		Comments:   html.EscapeString(request.Comments),
+		Comments:   request.Comments,
 		SourcePath: strings.TrimSpace(request.SourcePath),
 		PageTitle:  strings.TrimSpace(request.PageTitle),
 		UserAgent:  r.UserAgent(),

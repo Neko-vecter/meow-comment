@@ -74,7 +74,7 @@ const initialComments: Comment[] = [
         username: "Mina Chen",
         email: "mina@example.com",
         comments:
-            "The examples in this article helped me finally understand how the pieces fit together. Thank you for writing it!",
+            "The **examples** in this article helped me finally understand how the pieces fit together.\n\nThank you for writing it! [Related guide](https://link).",
         source_path: "/notes/designing-for-the-web",
         page_title: "Designing for the Web",
         created_at: "2026-09-29T15:30:00Z",
@@ -85,7 +85,7 @@ const initialComments: Comment[] = [
         username: "Alex Morgan",
         email: "alex@example.com",
         comments:
-            "Would you consider adding a follow-up about keyboard navigation and focus states?",
+            "Would you consider adding a follow-up about keyboard navigation and focus states?\n\nI especially found `:focus-visible` useful.\n\n> The focus ring should be easy to see.",
         source_path: "/guides/accessibility",
         page_title: "A Practical Accessibility Checklist",
         created_at: "2026-09-29T12:08:00Z",
@@ -96,7 +96,7 @@ const initialComments: Comment[] = [
         username: "Jun Park",
         email: "",
         comments:
-            "I tried this with a small project over the weekend and the result was much easier to maintain than my first attempt.",
+            "I tried this with a small project over the weekend.\n\n1. Start with a small scope.\n2. Keep the interface predictable.\n3. Refine after testing.\n\nIt was much easier to maintain than my first attempt.",
         source_path: "/journal/small-tools",
         page_title: "Small Tools, Thoughtfully Made",
         created_at: "2026-09-28T21:42:00Z",
@@ -106,7 +106,7 @@ const initialComments: Comment[] = [
         id: "preview-comment-4",
         username: "Riley",
         email: "riley@example.com",
-        comments: "A clear explanation. I bookmarked this for later.",
+        comments: "A clear explanation. I bookmarked this for later.\n\n**One small note:** the code example also works with `npm run build`.",
         source_path: "/notes/working-with-color",
         page_title: "Working with Color",
         created_at: "2026-09-28T16:05:00Z",
@@ -128,7 +128,7 @@ const initialComments: Comment[] = [
         username: "",
         email: "",
         comments:
-            "I found a typo in the second section: ‘recieve’ should be ‘receive’.",
+            "I found a typo in the second section: `recieve` should be `receive`.",
         source_path: "/notes/editorial-process",
         page_title: "A Calm Editorial Process",
         created_at: "2026-09-26T08:52:00Z",

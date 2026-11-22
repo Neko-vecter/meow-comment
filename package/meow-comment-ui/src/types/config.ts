@@ -1,5 +1,17 @@
 import type { MeowCommentsMessages } from "../i18n";
 
+export type MeowCommentsToolbarItem =
+    | "bold"
+    | "italic"
+    | "underline"
+    | "strike"
+    | "code"
+    | "codeBlock"
+    | "blockquote"
+    | "bulletList"
+    | "orderedList"
+    | "emoji";
+
 export interface MeowCommentsConfig {
     /** Element selector or element used to mount MeowComments. */
     el: string | HTMLElement;
@@ -16,5 +28,9 @@ export interface MeowCommentsConfig {
     /** `auto` discovers whether the server requires a CAPTCHA on the first submit. */
     captcha?: "auto" | "required" | "disabled";
     rememberUser?: boolean;
+    /** Toolbar buttons in display order. Set to false to hide the toolbar. */
+    toolbar?: MeowCommentsToolbarItem[] | false;
+    /** Override toolbar glyphs with plain text; HTML is never inserted. */
+    toolbarIcons?: Partial<Record<MeowCommentsToolbarItem, string>>;
     messages?: Partial<MeowCommentsMessages>;
 }

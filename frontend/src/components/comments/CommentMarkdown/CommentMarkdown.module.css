@@ -1,0 +1,62 @@
+.markdown {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: inherit;
+}
+
+.markdown > :first-child {
+    margin-top: 0;
+}
+
+.markdown > :last-child {
+    margin-bottom: 0;
+}
+
+.markdown a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.markdown blockquote {
+    margin: 0.5rem 0;
+    border-left: 2px solid var(--border);
+    padding-left: 0.75rem;
+    color: var(--muted-foreground);
+}
+
+.markdown pre {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--muted);
+    padding: 0.625rem 0.75rem;
+}
+
+.markdown code {
+    border-radius: 0.25rem;
+    background: var(--muted);
+    padding: 0.1rem 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 0.9em;
+}
+
+.markdown pre code {
+    background: transparent;
+    padding: 0;
+}
+
+.compact {
+    max-height: 3.5em;
+    overflow: hidden;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.markdown.compact p {
+    margin: 0;
+    max-width: none;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: normal;
+}

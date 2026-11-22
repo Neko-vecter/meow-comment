@@ -1,4 +1,4 @@
-export type { MeowCommentsConfig } from "./config";
+export type { MeowCommentsConfig, MeowCommentsToolbarItem } from "./config";
 export type {
     CaptchaResponse,
     CaptchaState,
