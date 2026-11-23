@@ -9,7 +9,7 @@ A lightweight, one-way comment collection system with RSS feed support.
 ## Add package
 
 ```shell
-yarn add @neko_vecter/meow-comment-ui
+pnpm add @neko_vecter/meow-comment-ui
 ```
 
 ## File layout
@@ -32,7 +32,7 @@ bash ./backend/deploy/build.sh
 
 ```shell
 cd ./frontend
-yarn build
+pnpm build
 ```
 
 ### component package
@@ -43,7 +43,7 @@ yarn build
 
 ```shell
 cd ./package/meow-comment-ui
-yarn dev
+pnpm dev
 ```
 
 ## Reference
